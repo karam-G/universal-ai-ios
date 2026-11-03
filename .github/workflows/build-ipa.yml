@@ -1,0 +1,46 @@
+name: Build Universal AI IPA
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'www/**'
+      - 'package.json'
+      - 'capacitor.config.json'
+      - '.github/workflows/build-ipa.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: macos-26
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Install dependencies
+        run: npm install
+      - name: Generate iOS project
+        run: |
+          npx cap add ios
+          npx cap sync ios
+      - name: Build unsigned app
+        run: xcodebuild -project ios/App/App.xcodeproj -scheme App -sdk iphoneos -configuration Release -derivedDataPath build CODE_SIGNING_ALLOWED=NO build
+      - name: Package IPA
+        run: |
+          set -euo pipefail
+          APP_PATH=build/Build/Products/Release-iphoneos/App.app
+          test -d "$APP_PATH"
+          mkdir -p package/Payload
+          ditto "$APP_PATH" package/Payload/App.app
+          cd package
+          zip -qry UniversalAI-unsigned.ipa Payload
+          unzip -t UniversalAI-unsigned.ipa
+      - uses: actions/upload-artifact@v4
+        with:
+          name: UniversalAI-unsigned-IPA
+          path: package/UniversalAI-unsigned.ipa
+          retention-days: 7
