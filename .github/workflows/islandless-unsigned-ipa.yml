@@ -1,0 +1,47 @@
+name: Build Islandless Probe IPA
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'experiments/IslandlessProbe/**'
+      - '.github/workflows/islandless-unsigned-ipa.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: macos-15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Build unsigned iOS app
+        working-directory: experiments/IslandlessProbe
+        run: |
+          set -euo pipefail
+          xcodebuild \
+            -project IslandlessProbe.xcodeproj \
+            -scheme IslandlessProbe \
+            -configuration Release \
+            -sdk iphoneos \
+            -destination 'generic/platform=iOS' \
+            -derivedDataPath "$RUNNER_TEMP/IslandlessDerived" \
+            CODE_SIGNING_ALLOWED=NO \
+            build
+          APP="$RUNNER_TEMP/IslandlessDerived/Build/Products/Release-iphoneos/IslandlessProbe.app"
+          test -d "$APP"
+          mkdir -p "$RUNNER_TEMP/package/Payload"
+          cp -R "$APP" "$RUNNER_TEMP/package/Payload/"
+          cd "$RUNNER_TEMP/package"
+          /usr/bin/zip -qry "$GITHUB_WORKSPACE/IslandlessProbe-unsigned.ipa" Payload
+          test -s "$GITHUB_WORKSPACE/IslandlessProbe-unsigned.ipa"
+
+      - name: Upload IPA artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: IslandlessProbe-unsigned-ipa
+          path: IslandlessProbe-unsigned.ipa
+          if-no-files-found: error
+          retention-days: 14
