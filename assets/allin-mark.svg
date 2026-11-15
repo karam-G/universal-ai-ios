@@ -1,0 +1,60 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
+<defs>
+  <radialGradient id="bg" cx="48%" cy="35%" r="78%">
+    <stop offset="0" stop-color="#171A42"/>
+    <stop offset=".52" stop-color="#090D22"/>
+    <stop offset="1" stop-color="#030611"/>
+  </radialGradient>
+  <linearGradient id="violet" x1="0" y1="0" x2="1" y2="1">
+    <stop offset="0" stop-color="#E3D9FF"/>
+    <stop offset=".24" stop-color="#A58BFF"/>
+    <stop offset=".58" stop-color="#6548D9"/>
+    <stop offset="1" stop-color="#35C8EE"/>
+  </linearGradient>
+  <linearGradient id="cyan" x1="0" y1="0" x2="1" y2="1">
+    <stop offset="0" stop-color="#BDEEFF"/>
+    <stop offset=".32" stop-color="#70CFFF"/>
+    <stop offset=".68" stop-color="#6B6CF3"/>
+    <stop offset="1" stop-color="#D5A6FF"/>
+  </linearGradient>
+  <linearGradient id="blue" x1="0" y1="1" x2="1" y2="0">
+    <stop offset="0" stop-color="#4B36C9"/>
+    <stop offset=".48" stop-color="#8A72FF"/>
+    <stop offset="1" stop-color="#6CE6F4"/>
+  </linearGradient>
+  <radialGradient id="core">
+    <stop offset="0" stop-color="#FFFFFF"/>
+    <stop offset=".32" stop-color="#D9D0FF"/>
+    <stop offset="1" stop-color="#9D7CFF" stop-opacity="0"/>
+  </radialGradient>
+  <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+    <feGaussianBlur stdDeviation="34"/>
+  </filter>
+  <filter id="soft" x="-30%" y="-30%" width="160%" height="160%">
+    <feGaussianBlur stdDeviation="12"/>
+  </filter>
+  <filter id="shadow" x="-40%" y="-40%" width="180%" height="180%">
+    <feGaussianBlur in="SourceAlpha" stdDeviation="18" result="blur"/>
+    <feOffset dy="18" result="offset"/>
+    <feColorMatrix in="offset" type="matrix" values="0 0 0 0 0.10 0 0 0 0 0.08 0 0 0 0 0.34 0 0 0 .65 0" result="shade"/>
+    <feMerge><feMergeNode in="shade"/><feMergeNode in="SourceGraphic"/></feMerge>
+  </filter>
+</defs>
+<rect width="1024" height="1024" fill="url(#bg)"/>
+<circle cx="512" cy="510" r="300" fill="#654BFF" opacity=".24" filter="url(#glow)"/>
+<circle cx="512" cy="510" r="230" fill="#28BCEB" opacity=".12" filter="url(#glow)"/>
+<g fill="none" stroke-linecap="round" filter="url(#shadow)">
+  <ellipse cx="512" cy="512" rx="300" ry="160" transform="rotate(38 512 512)" stroke="url(#violet)" stroke-width="76"/>
+  <ellipse cx="512" cy="512" rx="300" ry="160" transform="rotate(-38 512 512)" stroke="url(#cyan)" stroke-width="76"/>
+  <ellipse cx="512" cy="512" rx="190" ry="300" transform="rotate(0 512 512)" stroke="url(#blue)" stroke-width="72" opacity=".94"/>
+</g>
+<g fill="none" stroke-linecap="round" opacity=".56">
+  <ellipse cx="512" cy="512" rx="300" ry="160" transform="rotate(38 512 512)" stroke="#F1E9FF" stroke-width="7"/>
+  <ellipse cx="512" cy="512" rx="300" ry="160" transform="rotate(-38 512 512)" stroke="#C9F5FF" stroke-width="7"/>
+  <ellipse cx="512" cy="512" rx="190" ry="300" transform="rotate(0 512 512)" stroke="#E6D9FF" stroke-width="6"/>
+</g>
+<circle cx="512" cy="512" r="100" fill="#9A7DFF" opacity=".72" filter="url(#soft)"/>
+<path d="M512 405 L548 476 L619 512 L548 548 L512 619 L476 548 L405 512 L476 476 Z" fill="url(#core)"/>
+<path d="M512 446 L535 489 L578 512 L535 535 L512 578 L489 535 L446 512 L489 489 Z" fill="#F7F4FF" opacity=".94"/>
+<circle cx="512" cy="512" r="18" fill="#FFFFFF"/>
+</svg>
