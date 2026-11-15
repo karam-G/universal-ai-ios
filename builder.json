@@ -1,0 +1,24 @@
+{
+  "project": "ALLIN",
+  "platform": "ios",
+  "github": {
+    "owner": "karam-G",
+    "repo": "universal-ai-ios"
+  },
+  "provider": "github",
+  "codemagic": {},
+  "bitrise": {},
+  "ios": {
+    "path": "ios",
+    "bundleId": "com.karamg.allin",
+    "configuration": "Release"
+  },
+  "flutter": {
+    "watch": {}
+  },
+  "reactNative": {
+    "expo": true
+  },
+  "kmp": {},
+  "mobai": {}
+}
