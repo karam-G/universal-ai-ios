@@ -1,46 +1,47 @@
 # ALLIN App Store Release Checklist
 
-## App identity
-
-- Product name: ALLIN Daily (store listing; ALLIN remains the in-app brand)
+## Release candidate
+- Product name: ALLIN Daily (ALLIN is the in-app brand)
 - Bundle ID: com.karamg.allin
-- Release version prepared locally: 0.3.0
-- Store name selected to distinguish the listing from existing ALLIN apps: ALLIN Daily
+- Marketing version: 0.3.0
 - iOS build number: 7
-- Distribution target: iPhone first; iPad support disabled until its layout is tested
+- Minimum iOS version: 16.4
+- Device target: iPhone only; iPad support disabled pending layout testing
+- Source branch: allin/liquid-glass-0.3.0
+- Latest source commit: 1e69e07
+- Successful unsigned build: https://github.com/karam-G/universal-ai-ios/actions/runs/43724345900
+- IPA artifact: allin-0.3.0-liquid-glass-7.ipa (11,079,065 bytes; unsigned)
+- Artifact ZIP SHA-256: 5e8e5342ebf7d7ce0f370f14b3d6992bfedb5957b2cf93f76e68fbd1b43f8f21
+- IPA inspection confirms bundle ID com.karamg.allin, version 0.3.0, build 7, minimum iOS 16.4, and bundled GlassView / glassEffectStyle references.
+- Signing inspection: no embedded.mobileprovision and no app code signature. This is not install-ready or App Store-uploadable.
 
-## Public support and privacy URLs
+## Product and platform implementation
+- Five native iOS primary tabs using Expo Router NativeTabs and SF Symbols.
+- Native system tab-bar appearance on iOS 26+; native Liquid Glass controls/surfaces through expo-glass-effect 58.0.5.
+- Refined visual hierarchy, spacing, depth, ambient lighting and interaction surfaces.
+- Tools and Privacy are presented as modal routes.
+- Haptic feedback for key interactions.
+- Local-first profile, identity quiz, daily puzzle, poll, local-only posts and utility tools.
+- In-app privacy/data disclosure and local-data reset.
+- No account creation, cloud sync, analytics SDK or advertising SDK in this release.
+- Connect content is local to this device. Do not describe it as a live public community.
 
-- Privacy policy: https://github.com/karam-G/universal-ai-ios/blob/allin/liquid-glass-0.3.0/PRIVACY.md
-- Support: https://github.com/karam-G/universal-ai-ios/issues
+## Public support and privacy
+- Static site source: docs/index.html, docs/privacy.html and docs/support.html.
+- Privacy policy source: PRIVACY.md.
+- Support tracker: https://github.com/karam-G/universal-ai-ios/issues
+- GitHub Pages is not enabled yet; publish and verify a public HTTPS URL before App Store Connect submission.
+- App currently opens the branch-specific GitHub privacy document; replace it with the final public privacy URL after Pages deployment.
 
-## Completed in the current local release candidate
-
-- Native iOS tab navigation through Expo Router NativeTabs; five primary tabs, using the system Liquid Glass tab-bar treatment on iOS 26+.
-- Native Liquid Glass surfaces for selected high-level controls and visual accents via expo-glass-effect 58.0.5.
-- Refined content hierarchy, spacing, card depth, ambient color fields, and interaction surfaces.
-- Tools and Privacy presented as native modal routes.
-- SF Symbols for native tab items.
-- Native haptic feedback for key interactions.
-- Updated 1024×1024 RGB app icon with no alpha channel.
-- Custom splash artwork and dark splash background.
-- In-app Privacy & Data screen.
-- Local-only data disclosure and reset control.
-- Privacy policy and support documents.
-- Patched minimatch to 11.0.1; npm audit reports zero vulnerabilities after lockfile refresh.
-
-## Still required before public App Store submission
-
-1. Build and install the 0.2.3 IPA on a physical iPhone running iOS 26; verify tab glass, modal presentation, safe areas, haptics, all app sections, data reset, and cold launch.
-2. Publish docs/privacy.html and docs/support.html on a public HTTPS URL. GitHub Pages is the zero-cost option.
-3. Add the public privacy-policy URL inside the app and in App Store Connect metadata.
-4. Prepare App Store screenshots from the tested iPhone build; do not use mock screens.
-5. Finalize app name, subtitle, description, keywords, category, age rating, and review notes.
+## Required validation before release
+1. Rebuild after the privacy modal route change and verify the new artifact metadata and signing state.
+2. Re-sign for device testing using an authorized Apple ID development profile / supported sideloading workflow, then install on the physical iPhone 15.
+3. Test cold launch, all five tabs, modal presentation/dismissal, Liquid Glass on iOS 26, safe areas, haptics, quiz, puzzle, poll, local posts, tools, data persistence and reset.
+4. Capture genuine screenshots from the tested iPhone; do not use mockups.
+5. Finalize store listing: name, subtitle, description, keywords, category, age rating and review notes.
 6. Complete App Privacy disclosures in App Store Connect.
-7. Resolve the product decision for Connect: this release is local-only and has no public feed or cloud sync. Do not market it as a live social network until a backend, moderation, reporting, and blocking are implemented.
-8. Enroll in the Apple Developer Program and sign the release. Apple currently lists the individual membership at USD 99 per year; local pricing may vary.
-9. Upload the signed release through Apple's supported submission workflow and pass App Review.
+7. Enroll in Apple Developer Program and configure App Store distribution signing. A free unsigned build is not a public distribution build.
+8. Upload the signed Release build through App Store Connect and submit for review.
 
 ## Distribution boundary
-
-An unsigned IPA is useful for sideloading and device testing. It is not an App Store submission build. Public App Store distribution and TestFlight require an active Apple Developer Program membership and valid signing credentials.
+An unsigned IPA is a build artifact but cannot be installed directly on a normal iPhone or submitted to App Store Connect. TestFlight and public App Store distribution require an active Apple Developer Program membership and valid distribution signing credentials.
