@@ -1,6 +1,6 @@
 # ALLIN Daily — App Store Connect draft
 
-This is proposed listing copy for the 0.3.0 release. Verify the final name and screenshot set in App Store Connect before submission.
+This is proposed listing copy for the 0.4.0 release. Verify the final name and screenshot set in App Store Connect before submission.
 
 ## App name
 ALLIN Daily
@@ -47,12 +47,12 @@ Likely 4+ based on the current local-only feature set and absence of public chat
 - Data collected by the developer: none expected for this release.
 - Data used for tracking: none.
 - Third-party analytics or advertising: none included in the current dependency list.
-- Local device storage: display name, quiz answers/results, puzzle progress, poll choice, local posts and activity counters are stored locally.
+- Local device storage: display name, quiz answers/results, puzzle progress, poll choice, private journal entries and activity counters are stored locally.
 - Sharing: only content the user deliberately shares through the iOS share sheet is passed to the destination they choose.
 Verify this against the final binary and every SDK before declaring the App Privacy answers.
 
 ## URLs
-- Privacy policy (current public repository page): https://github.com/karam-G/universal-ai-ios/blob/allin/liquid-glass-0.3.0/PRIVACY.md
+- Privacy policy (current public repository page): https://github.com/karam-G/universal-ai-ios/blob/allin/liquid-glass-0.4.0/PRIVACY.md
 - Support: https://github.com/karam-G/universal-ai-ios/issues
 
 ## Screenshot plan

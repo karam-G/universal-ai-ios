@@ -1,15 +1,15 @@
 {
   "expo": {
-    "name": "ALLIN Daily",
+    "name": "ALLIN",
     "slug": "allin",
-    "version": "0.3.0",
+    "version": "0.4.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "dark",
     "ios": {
       "bundleIdentifier": "com.karamg.allin",
       "supportsTablet": false,
-      "buildNumber": "8"
+      "buildNumber": "9"
     },
     "android": {
       "package": "com.karamg.allin",
@@ -20,7 +20,7 @@
         "monochromeImage": "./assets/android-icon-monochrome.png"
       },
       "predictiveBackGestureEnabled": false,
-      "versionCode": 8
+      "versionCode": 9
     },
     "web": {
       "favicon": "./assets/favicon.png"

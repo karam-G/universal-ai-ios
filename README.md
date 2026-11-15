@@ -2,7 +2,7 @@
 
 **One place. Endless things to explore.**
 
-ALLIN is a mobile-first, local-first Expo + React Native app for iPhone and Android. Version 0.3.0 is a local-first iOS release candidate with an identity quiz, daily word puzzle, daily poll, local discussion posts, practical tools and a guest profile.
+ALLIN is a mobile-first, local-first Expo + React Native app for iPhone and Android. Version 0.4.0 is a local-first iOS release candidate with an identity quiz, persistent daily word puzzle, private reflection journal, practical tools and a personal profile.
 
 ## Current release boundaries
 
@@ -37,7 +37,7 @@ This repository is configured for [MobAI iOS Builder](https://github.com/MobAI-A
 
 ## Release notes
 
-- 0.3.0: Native iOS Liquid Glass surfaces, native tab navigation, haptics, refreshed interface, and App Store preparation. The current IPA is unsigned and is not an App Store submission build.
+- 0.4.0: Rebuilt the home dashboard, clearer daily journey, private Journal positioning, persistent puzzle progress, and refined iOS visual hierarchy. The current IPA is unsigned and is not an App Store submission build.
 
 ## Roadmap
 

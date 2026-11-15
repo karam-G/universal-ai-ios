@@ -16,7 +16,7 @@ export default function TabLayout() {
         <NativeTabs.Trigger.Icon sf={{ default: "calendar", selected: "calendar" }} md="today" />
       </NativeTabs.Trigger>
       <NativeTabs.Trigger name="connect">
-        <NativeTabs.Trigger.Label>Connect</NativeTabs.Trigger.Label>
+        <NativeTabs.Trigger.Label>Journal</NativeTabs.Trigger.Label>
         <NativeTabs.Trigger.Icon sf={{ default: "bubble.left.and.bubble.right", selected: "bubble.left.and.bubble.right.fill" }} md="forum" />
       </NativeTabs.Trigger>
       <NativeTabs.Trigger name="profile">

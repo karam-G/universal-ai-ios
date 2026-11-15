@@ -3,11 +3,11 @@
 ## Release candidate
 - Product name: ALLIN Daily (ALLIN is the in-app brand)
 - Bundle ID: com.karamg.allin
-- Marketing version: 0.3.0
+- Marketing version: 0.4.0 (redesign candidate; IPA pending)
 - iOS build number: 7
 - Minimum iOS version: 16.4
 - Device target: iPhone only; iPad support disabled pending layout testing
-- Source branch: allin/liquid-glass-0.3.0
+- Source branch: allin/premium-redesign-0.4.0
 - Latest source commit: 1e69e07
 - Successful unsigned build: https://github.com/karam-G/universal-ai-ios/actions/runs/43724345900
 - IPA artifact: allin-0.3.0-liquid-glass-7.ipa (11,079,065 bytes; unsigned)
