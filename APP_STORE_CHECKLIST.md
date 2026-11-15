@@ -6,12 +6,12 @@
 - Bundle ID: com.karamg.allin
 - Release version prepared locally: 0.3.0
 - Store name selected to distinguish the listing from existing ALLIN apps: ALLIN Daily
-- iOS build number: 6
+- iOS build number: 7
 - Distribution target: iPhone first; iPad support disabled until its layout is tested
 
 ## Public support and privacy URLs
 
-- Privacy policy: https://github.com/karam-G/universal-ai-ios/blob/main/PRIVACY.md
+- Privacy policy: https://github.com/karam-G/universal-ai-ios/blob/allin/liquid-glass-0.3.0/PRIVACY.md
 - Support: https://github.com/karam-G/universal-ai-ios/issues
 
 ## Completed in the current local release candidate
