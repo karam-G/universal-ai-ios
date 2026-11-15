@@ -1,7 +1,7 @@
 # ALLIN Privacy Policy
 
 **Effective date:** 15 November 2026  
-**App version covered:** 0.2.2
+**App version covered:** 0.2.3
 
 ## Summary
 
