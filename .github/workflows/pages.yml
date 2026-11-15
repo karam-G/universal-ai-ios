@@ -1,12 +1,6 @@
 name: Publish ALLIN privacy and support pages
 
 on:
-  push:
-    branches:
-      - allin/liquid-glass-0.3.0
-    paths:
-      - "docs/**"
-      - ".github/workflows/pages.yml"
   workflow_dispatch:
 
 permissions:

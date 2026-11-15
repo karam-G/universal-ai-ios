@@ -30,7 +30,7 @@
 - Static site source: docs/index.html, docs/privacy.html and docs/support.html.
 - Privacy policy source: PRIVACY.md.
 - Support tracker: https://github.com/karam-G/universal-ai-ios/issues
-- GitHub Pages is not enabled yet; publish and verify a public HTTPS URL before App Store Connect submission.
+- GitHub Pages deployment workflow is prepared, but repository Pages is not enabled. A repository admin must open Settings → Pages, select GitHub Actions as the publishing source, then run the manual “Publish ALLIN privacy and support pages” workflow. GitHub App automation lacks permission to enable this setting.
 - App currently opens the branch-specific GitHub privacy document; replace it with the final public privacy URL after Pages deployment.
 
 ## Required validation before release
