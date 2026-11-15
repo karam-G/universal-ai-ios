@@ -1,26 +1,27 @@
 // !$*UTF8*$!
 {
-archiveVersion = 1; classes = {}; objectVersion = 56;
-objects = {
-A1 = {isa = PBXBuildFile; fileRef = F1;};
-A2 = {isa = PBXBuildFile; fileRef = F2;};
-F1 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IslandlessProbeApp.swift; sourceTree = "<group>";};
-F2 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>";};
-F3 = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>";};
-P1 = {isa = PBXFileReference; explicitFileType = wrapper.application; path = IslandlessProbe.app; sourceTree = BUILT_PRODUCTS_DIR;};
-G1 = {isa = PBXGroup; children = (G2, G3,); sourceTree = "<group>";};
-G2 = {isa = PBXGroup; path = IslandlessProbe; sourceTree = "<group>"; children = (F1, F2, F3,);};
-G3 = {isa = PBXGroup; name = Products; sourceTree = "<group>"; children = (P1,);};
-T1 = {isa = PBXNativeTarget; buildConfigurationList = C3; buildPhases = (S1, B1,); buildRules = (); dependencies = (); name = IslandlessProbe; productName = IslandlessProbe; productReference = P1; productType = "com.apple.product-type.application";};
-PR = {isa = PBXProject; attributes = {LastUpgradeCheck = 1600;}; buildConfigurationList = C2; compatibilityVersion = "Xcode 14.0"; developmentRegion = en; mainGroup = G1; productRefGroup = G3; projectDirPath = ""; targets = (T1,);};
-S1 = {isa = PBXSourcesBuildPhase; buildActionMask = 2147483647; files = (A1, A2,); runOnlyForDeploymentPostprocessing = 0;};
-B1 = {isa = PBXFrameworksBuildPhase; buildActionMask = 2147483647; files = (); runOnlyForDeploymentPostprocessing = 0;};
-C2 = {isa = XCConfigurationList; buildConfigurations = (D1, D2,); defaultConfigurationIsVisible = 0; defaultConfigurationName = Release;};
-C3 = {isa = XCConfigurationList; buildConfigurations = (D3, D4,); defaultConfigurationIsVisible = 0; defaultConfigurationName = Release;};
-D1 = {isa = XCBuildConfiguration; buildSettings = {IPHONEOS_DEPLOYMENT_TARGET = 17.0;}; name = Debug;};
-D2 = {isa = XCBuildConfiguration; buildSettings = {IPHONEOS_DEPLOYMENT_TARGET = 17.0;}; name = Release;};
-D3 = {isa = XCBuildConfiguration; buildSettings = {PRODUCT_BUNDLE_IDENTIFIER = com.karamg.islandlessprobe; PRODUCT_NAME = "$(TARGET_NAME)"; SWIFT_VERSION = 5.0; TARGETED_DEVICE_FAMILY = 1; IPHONEOS_DEPLOYMENT_TARGET = 17.0; INFOPLIST_FILE = IslandlessProbe/Info.plist; GENERATE_INFOPLIST_FILE = NO; CODE_SIGNING_ALLOWED = NO;}; name = Debug;};
-D4 = {isa = XCBuildConfiguration; buildSettings = {PRODUCT_BUNDLE_IDENTIFIER = com.karamg.islandlessprobe; PRODUCT_NAME = "$(TARGET_NAME)"; SWIFT_VERSION = 5.0; TARGETED_DEVICE_FAMILY = 1; IPHONEOS_DEPLOYMENT_TARGET = 17.0; INFOPLIST_FILE = IslandlessProbe/Info.plist; GENERATE_INFOPLIST_FILE = NO; CODE_SIGNING_ALLOWED = NO; SWIFT_OPTIMIZATION_LEVEL = "-O";}; name = Release;};
-};
-rootObject = PR;
+  archiveVersion = 1;
+  classes = {};
+  objectVersion = 56;
+  objects = {
+    A1 = {isa = PBXBuildFile; fileRef = F1; };
+    A2 = {isa = PBXBuildFile; fileRef = F2; };
+    F1 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IslandlessProbeApp.swift; sourceTree = "<group>"; };
+    F2 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+    F3 = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+    P1 = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = IslandlessProbe.app; sourceTree = BUILT_PRODUCTS_DIR; };
+    G1 = {isa = PBXGroup; children = (F1, F2, F3, G3,); sourceTree = "<group>"; };
+    G3 = {isa = PBXGroup; name = Products; children = (P1,); sourceTree = "<group>"; };
+    T1 = {isa = PBXNativeTarget; buildConfigurationList = C3; buildPhases = (S1, B1,); buildRules = (); dependencies = (); name = IslandlessProbe; productName = IslandlessProbe; productReference = P1; productType = "com.apple.product-type.application"; };
+    PR = {isa = PBXProject; attributes = {LastUpgradeCheck = 1600; TargetAttributes = {T1 = {CreatedOnToolsVersion = 16.0; }; }; }; buildConfigurationList = C2; compatibilityVersion = "Xcode 14.0"; developmentRegion = en; mainGroup = G1; productRefGroup = G3; projectDirPath = ""; projectRoot = ""; targets = (T1,); };
+    S1 = {isa = PBXSourcesBuildPhase; buildActionMask = 2147483647; files = (A1, A2,); runOnlyForDeploymentPostprocessing = 0; };
+    B1 = {isa = PBXFrameworksBuildPhase; buildActionMask = 2147483647; files = (); runOnlyForDeploymentPostprocessing = 0; };
+    C2 = {isa = XCConfigurationList; buildConfigurations = (D1, D2,); defaultConfigurationIsVisible = 0; defaultConfigurationName = Release; };
+    C3 = {isa = XCConfigurationList; buildConfigurations = (D3, D4,); defaultConfigurationIsVisible = 0; defaultConfigurationName = Release; };
+    D1 = {isa = XCBuildConfiguration; buildSettings = {SDKROOT = iphoneos; SUPPORTED_PLATFORMS = "iphoneos iphonesimulator"; IPHONEOS_DEPLOYMENT_TARGET = 17.0; }; name = Debug; };
+    D2 = {isa = XCBuildConfiguration; buildSettings = {SDKROOT = iphoneos; SUPPORTED_PLATFORMS = "iphoneos iphonesimulator"; IPHONEOS_DEPLOYMENT_TARGET = 17.0; }; name = Release; };
+    D3 = {isa = XCBuildConfiguration; buildSettings = {PRODUCT_BUNDLE_IDENTIFIER = com.karamg.islandlessprobe; PRODUCT_NAME = "$(TARGET_NAME)"; SWIFT_VERSION = 5.0; TARGETED_DEVICE_FAMILY = 1; SDKROOT = iphoneos; SUPPORTED_PLATFORMS = "iphoneos iphonesimulator"; IPHONEOS_DEPLOYMENT_TARGET = 17.0; INFOPLIST_FILE = Info.plist; GENERATE_INFOPLIST_FILE = NO; CODE_SIGNING_ALLOWED = NO; SUPPORTS_MACCATALYST = NO; }; name = Debug; };
+    D4 = {isa = XCBuildConfiguration; buildSettings = {PRODUCT_BUNDLE_IDENTIFIER = com.karamg.islandlessprobe; PRODUCT_NAME = "$(TARGET_NAME)"; SWIFT_VERSION = 5.0; TARGETED_DEVICE_FAMILY = 1; SDKROOT = iphoneos; SUPPORTED_PLATFORMS = "iphoneos iphonesimulator"; IPHONEOS_DEPLOYMENT_TARGET = 17.0; INFOPLIST_FILE = Info.plist; GENERATE_INFOPLIST_FILE = NO; CODE_SIGNING_ALLOWED = NO; SUPPORTS_MACCATALYST = NO; SWIFT_OPTIMIZATION_LEVEL = "-O"; }; name = Release; };
+  };
+  rootObject = PR;
 }
