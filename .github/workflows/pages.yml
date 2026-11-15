@@ -28,7 +28,9 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v6
       - name: Configure GitHub Pages
-        uses: actions/configure-pages@v5`n        with:`n          enablement: true
+        uses: actions/configure-pages@v5
+        with:
+          enablement: true
       - name: Upload site files
         uses: actions/upload-pages-artifact@v4
         with:
