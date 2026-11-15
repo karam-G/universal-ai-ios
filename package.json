@@ -9,7 +9,8 @@
     "ios": "expo start --ios",
     "web": "expo start --web",
     "typecheck": "tsc --noEmit",
-    "check": "npm run typecheck && expo export --platform ios"
+    "check": "npm run typecheck && npm test && expo export --platform ios",
+    "test": "node scripts/validate-assets.mjs"
   },
   "dependencies": {
     "@react-native-async-storage/async-storage": "2.2.0",

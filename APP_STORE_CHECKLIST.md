@@ -3,7 +3,7 @@
 ## Current candidate
 - Product: ALLIN
 - Version: 0.4.0
-- Build: 11 (next build; build 10 is the last verified IPA)
+- Build: 12 (dictionary-integrated release candidate)
 - Bundle ID: com.karamg.allin
 - Minimum iOS: 16.4
 - Device target: iPhone
@@ -16,18 +16,18 @@
 ## Product scope in this release
 - Home dashboard and five native tabs.
 - Eight-question entertainment quiz and four archetypes.
-- Daily offline five-letter puzzle, six attempts, saved progress and streaks.
+- Daily offline five-letter puzzle, 12,653-word dictionary, six attempts, saved progress, duplicate-letter-aware clues and streaks.
 - Private on-device Journal with daily reflection and individual entry deletion.
 - Offline text counter, percentage calculator and decision picker.
 - Profile, local-data reset, privacy information and support link.
 - No login, online community, cloud sync, generative AI, analytics or advertising. Do not advertise these as available.
 
 ## Automated validation
-- TypeScript: passed on build 10 source.
-- Expo iOS bundle export: passed on build 10 source.
+- TypeScript: passed on build 12 source.
+- Expo iOS bundle export: passed on build 12 source.
 - GitHub Actions iOS archive/IPA build: passed for build 10.
-- Physical iPhone installation and interactive QA: still required; build 10 is unsigned.
-- iOS Simulator smoke test workflow is being corrected to select the actual generated app scheme and run against the current release branch.
+- Physical iPhone installation and interactive QA: still required; CI IPAs are unsigned.
+- iOS Simulator smoke test workflow now selects the top-level generated workspace or project and runs against the current release branch.
 
 ## Before public distribution
 1. Sign the IPA using a valid Apple development profile and install it on the physical iPhone 15.
@@ -38,4 +38,4 @@
 6. App Store / TestFlight publication requires Apple Developer Program membership and distribution signing.
 
 ## Important boundary
-Build success proves compilation and IPA packaging only. It does not prove real-device behavior or make an unsigned IPA installable. Do not mark public release complete until signed physical-device QA and Apples distribution requirements are satisfied.
+Build success proves compilation and IPA packaging only. It does not prove real-device behavior or make an unsigned IPA installable. Do not mark public release complete until signed physical-device QA and Apple's distribution requirements are satisfied.

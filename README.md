@@ -8,7 +8,7 @@ ALLIN 0.4.0 is a private, local-first daily companion for iPhone. It combines a 
 
 - **Home:** a personal dashboard with daily focus, activity and streak summaries, and shortcuts.
 - **Discover:** an eight-question entertainment quiz with four personality-style results. It is not a clinical or validated psychological assessment.
-- **Daily:** an offline five-letter word puzzle with six attempts, letter-position feedback, and per-day progress.
+- **Daily:** an offline five-letter word puzzle with a bundled 12,653-word dictionary, six attempts, letter-position feedback, and per-day progress.
 - **Journal:** a rotating reflection prompt and private notes saved on this device. Entries can be deleted individually.
 - **Tools:** offline text and word counter, percentage calculator, and decision picker.
 - **Profile:** display name, identity result, activity summary, privacy information, and local-data reset.
@@ -20,6 +20,8 @@ ALLIN 0.4.0 is a private, local-first daily companion for iPhone. It combines a 
 - The Journal is private to this installation; it is not a public feed and entries are not shared with other users.
 - The quiz is for entertainment and self-reflection only.
 - The app only shares content when the user explicitly invokes the iOS share sheet.
+
+The five-letter dictionary is bundled for offline validation; no word-checking API or network connection is used. Its MIT attribution is in THIRD_PARTY_NOTICES.md.
 
 ## Run on Windows
 
@@ -40,7 +42,7 @@ An unsigned IPA is **not directly installable** on a standard iPhone. Device ins
 - Version: 0.4.0
 - Bundle ID: com.karamg.allin
 - Minimum iOS: 16.4
-- Current build number: 11
+- Current build number: 12
 - Target: iPhone
 
 ## Release readiness

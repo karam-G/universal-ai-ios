@@ -1,0 +1,11 @@
+import fs from "node:fs";
+import assert from "node:assert/strict";
+const words = JSON.parse(fs.readFileSync(new URL("../assets/words5.json", import.meta.url), "utf8"));
+assert.ok(Array.isArray(words) && words.length > 10000, "Offline dictionary should contain over 10,000 entries");
+assert.equal(new Set(words).size, words.length, "Dictionary entries must be unique");
+assert.ok(words.every((word) => typeof word === "string" && /^[a-z]{5}$/.test(word)), "Every dictionary entry must be a lowercase five-letter word");
+assert.deepEqual(words, [...words].sort(), "Dictionary must be sorted for deterministic builds");
+const targets = ["ORBIT","PIXEL","SPARK","QUEST","BLOOM","CRANE","FROST","GLOBE","HONEY","LUNAR","MAPLE","NOVEL","OCEAN","PRISM","RIVER","SOLAR","TIGER","VIVID","WALTZ","YOUTH","AMBER","BRAVE","CORAL","DREAM","EMBER","FLAME","GRAPE","HAVEN","IVORY","JOLLY","LEMON","MIRTH","NORTH","OPERA","PLANT","QUIET","RADAR","SHINE","TRAIL","UNITY","VAPOR","WHEAT","STORM","CLOUD","BEACH","CANDY","DELTA","EAGLE","FAITH","GHOST","HEART","JUICE","KAYAK","LIGHT","MUSIC","NIGHT"];
+for (const target of targets) assert.ok(words.includes(target.toLowerCase()), "Puzzle answer missing from dictionary: " + target);
+for (const file of ["icon.png", "favicon.png", "android-icon-foreground.png"]) assert.ok(fs.existsSync(new URL("../assets/" + file, import.meta.url)), "Missing app asset: " + file);
+console.log("Asset validation passed: " + words.length.toLocaleString() + " offline five-letter words and " + targets.length + " puzzle answers.");
