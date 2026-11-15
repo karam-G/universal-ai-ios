@@ -102,3 +102,39 @@ struct WhiteIslandAura: View {
     }
 }
 
+struct ProbeWallpaper: View {
+    let animate: Bool
+    var body: some View {
+        GeometryReader { geo in
+            ZStack {
+                LinearGradient(colors: [
+                    Color(red: 0.19, green: 0.20, blue: 0.25),
+                    Color(red: 0.07, green: 0.08, blue: 0.12),
+                    Color(red: 0.015, green: 0.02, blue: 0.05)
+                ], startPoint: animate ? .topLeading : .bottomLeading,
+                   endPoint: animate ? .bottomTrailing : .topTrailing)
+                Circle().fill(.white.opacity(0.17))
+                    .frame(width: geo.size.width * 0.9)
+                    .blur(radius: 90)
+                    .offset(x: animate ? -100 : 100, y: -geo.size.height * 0.34)
+                Circle().fill(.cyan.opacity(0.10))
+                    .frame(width: geo.size.width * 0.75)
+                    .blur(radius: 85)
+                    .offset(x: animate ? 110 : -90, y: geo.size.height * 0.25)
+                Canvas { context, size in
+                    var path = Path()
+                    for x in stride(from: CGFloat(0), through: size.width, by: 24) {
+                        path.move(to: CGPoint(x: x, y: 0))
+                        path.addLine(to: CGPoint(x: x, y: size.height))
+                    }
+                    for y in stride(from: CGFloat(0), through: size.height, by: 24) {
+                        path.move(to: CGPoint(x: 0, y: y))
+                        path.addLine(to: CGPoint(x: size.width, y: y))
+                    }
+                    context.stroke(path, with: .color(.white.opacity(0.055)), lineWidth: 0.5)
+                }
+            }
+        }
+        .accessibilityHidden(true)
+    }
+}
