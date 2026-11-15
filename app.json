@@ -9,7 +9,7 @@
     "ios": {
       "bundleIdentifier": "com.karamg.allin",
       "supportsTablet": false,
-      "buildNumber": "10"
+      "buildNumber": "11"
     },
     "android": {
       "package": "com.karamg.allin",
@@ -20,7 +20,7 @@
         "monochromeImage": "./assets/android-icon-monochrome.png"
       },
       "predictiveBackGestureEnabled": false,
-      "versionCode": 10
+      "versionCode": 11
     },
     "web": {
       "favicon": "./assets/favicon.png"

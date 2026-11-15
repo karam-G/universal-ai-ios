@@ -1,9 +1,9 @@
-# ALLIN Daily — App Store Connect draft
+# ALLIN — App Store Connect draft
 
 This is proposed listing copy for the 0.4.0 release. Verify the final name and screenshot set in App Store Connect before submission.
 
 ## App name
-ALLIN Daily
+ALLIN
 
 ## Subtitle
 A fresh discovery every day
@@ -12,7 +12,7 @@ A fresh discovery every day
 A little discovery, a daily challenge, and useful tools—one calm space to make today count.
 
 ## Description
-ALLIN Daily brings together small experiences designed to make your day more interesting.
+ALLIN brings together small experiences designed to make your day more interesting.
 
 DISCOVER YOUR TYPE
 Answer eight quick, just-for-fun questions and get an archetype that gives you a new way to describe yourself. It is for entertainment and self-reflection, not a psychological assessment.
@@ -20,16 +20,16 @@ Answer eight quick, just-for-fun questions and get an archetype that gives you a
 A NEW DAILY PUZZLE
 Take on a five-letter word challenge. You have six tries to find the answer, with clues after every guess.
 
-DAILY POLLS
+DAILY REFLECTIONS
 Choose your answer to a rotating daily question and keep track of your own activity.
 
 SMALL, USEFUL TOOLS
 Use a text counter, percentage calculator, or decision picker when you need a quick hand.
 
 YOUR SPACE, YOUR DEVICE
-Set a display name, view your streak and activity, and reset your locally stored app data whenever you want. Your profile, quiz result, puzzle progress, poll choice and posts stay on this device in this release. There is no ALLIN account, public community feed or cloud sync.
+Set a display name, view your streak and activity, and reset your locally stored app data whenever you want. Your profile, quiz result, puzzle progress, reflection choices and private journal entries stay on this device in this release. There is no ALLIN account, public community feed or cloud sync.
 
-ALLIN Daily is a simple place to discover something, solve something, and make a little progress every day.
+ALLIN is a simple place to discover something, solve something, and make a little progress every day.
 
 ## Keywords (draft; 100-character limit applies in App Store Connect)
 daily,puzzle,quiz,personality,word,tools,polls,challenge,discovery,decision
@@ -52,7 +52,7 @@ Likely 4+ based on the current local-only feature set and absence of public chat
 Verify this against the final binary and every SDK before declaring the App Privacy answers.
 
 ## URLs
-- Privacy policy (current public repository page): https://github.com/karam-G/universal-ai-ios/blob/allin/liquid-glass-0.4.0/PRIVACY.md
+- Privacy policy (current public repository page): https://github.com/karam-G/universal-ai-ios/blob/allin/premium-redesign-0.4.0/PRIVACY.md
 - Support: https://github.com/karam-G/universal-ai-ios/issues
 
 ## Screenshot plan

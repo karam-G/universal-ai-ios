@@ -3,7 +3,7 @@ name: ALLIN iOS Simulator Smoke Test
 on:
   push:
     branches:
-      - allin/liquid-glass-0.3.0
+      - allin/premium-redesign-0.4.0
     paths:
       - "App.tsx"
       - "app/**"
@@ -48,15 +48,26 @@ jobs:
           SIM_DERIVED: ${{ runner.temp }}/ALLINSimulator
         run: |
           set -euo pipefail
-          WORKSPACE=$(find ios -maxdepth 2 -name '*.xcworkspace' -type d | head -1)
-          test -n "$WORKSPACE"
-          SCHEME=$(basename "$WORKSPACE" .xcworkspace)
+          WORKSPACE=$(find ios -maxdepth 1 -name '*.xcworkspace' -type d | head -1)
+          PROJECT=$(find ios -maxdepth 1 -name '*.xcodeproj' -type d | head -1)
+          if [ -n "$WORKSPACE" ]; then
+            TARGET_FLAG=-workspace
+            TARGET_PATH=$WORKSPACE
+            SCHEME=$(basename "$WORKSPACE" .xcworkspace)
+          elif [ -n "$PROJECT" ]; then
+            TARGET_FLAG=-project
+            TARGET_PATH=$PROJECT
+            SCHEME=$(basename "$PROJECT" .xcodeproj)
+          else
+            echo "::error::No generated iOS workspace or project found"
+            exit 1
+          fi
           DEVICE_ID=$(xcrun simctl list devices available | awk -F '[()]' '/iPhone/ {print $2; exit}')
           test -n "$DEVICE_ID"
           echo "Simulator device: $DEVICE_ID"
           xcrun simctl boot "$DEVICE_ID" || true
           xcrun simctl bootstatus "$DEVICE_ID" -b
-          xcodebuild -workspace "$WORKSPACE" -scheme "$SCHEME" -configuration Debug -destination "platform=iOS Simulator,id=$DEVICE_ID" -derivedDataPath "$SIM_DERIVED" CODE_SIGNING_ALLOWED=NO COMPILER_INDEX_STORE_ENABLE=NO build
+          xcodebuild "$TARGET_FLAG" "$TARGET_PATH" -scheme "$SCHEME" -configuration Debug -destination "platform=iOS Simulator,id=$DEVICE_ID" -derivedDataPath "$SIM_DERIVED" CODE_SIGNING_ALLOWED=NO COMPILER_INDEX_STORE_ENABLE=NO build
           APP_PATH=$(find "$SIM_DERIVED/Build/Products/Debug-iphonesimulator" -maxdepth 1 -name '*.app' -type d | head -1)
           test -n "$APP_PATH"
           xcrun simctl install "$DEVICE_ID" "$APP_PATH"
@@ -74,6 +85,6 @@ jobs:
         if: success()
         uses: actions/upload-artifact@v7
         with:
-          name: allin-0.3.0-simulator-smoke
+          name: allin-0.4.0-simulator-smoke
           path: simulator-shots/*.png
           retention-days: 7

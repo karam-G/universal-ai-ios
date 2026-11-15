@@ -2,46 +2,47 @@
 
 **One place. Endless things to explore.**
 
-ALLIN is a mobile-first, local-first Expo + React Native app for iPhone and Android. Version 0.4.0 is a local-first iOS release candidate with an identity quiz, persistent daily word puzzle, private reflection journal, practical tools and a personal profile.
+ALLIN 0.4.0 is a private, local-first daily companion for iPhone. It combines a short self-discovery experience, a daily five-letter puzzle, a private reflection journal, and practical offline tools in one polished native app.
 
-## Current release boundaries
+## What is included
 
-- No domain, API key, subscription, paid service or external API is required.
-- Quiz results, activity, votes, profile and posts are stored on the device with AsyncStorage.
-- Community posts and poll votes are **local to this device**; they are not shared with other users yet.
-- The identity quiz is for entertainment and self-reflection, not a clinical or validated psychological assessment.
-- No account or cloud sync is required in this first release.
+- **Home:** a personal dashboard with daily focus, activity and streak summaries, and shortcuts.
+- **Discover:** an eight-question entertainment quiz with four personality-style results. It is not a clinical or validated psychological assessment.
+- **Daily:** an offline five-letter word puzzle with six attempts, letter-position feedback, and per-day progress.
+- **Journal:** a rotating reflection prompt and private notes saved on this device. Entries can be deleted individually.
+- **Tools:** offline text and word counter, percentage calculator, and decision picker.
+- **Profile:** display name, identity result, activity summary, privacy information, and local-data reset.
+
+## Privacy and operating model
+
+- No account, server, API key, subscription, advertising SDK, analytics SDK, or cloud sync is required.
+- Profile data, quiz results, puzzle progress, reflection choices, journal entries, and activity are stored locally using AsyncStorage.
+- The Journal is private to this installation; it is not a public feed and entries are not shared with other users.
+- The quiz is for entertainment and self-reflection only.
+- The app only shares content when the user explicitly invokes the iOS share sheet.
 
 ## Run on Windows
 
-1. Install Node.js LTS and Git.
-2. In this folder run `npm install`.
-3. Start the Expo development server with `npm start`.
-4. Scan the QR code using Expo Go on your iPhone (same Wi-Fi), or run `npm run web` for the web preview if web dependencies are installed.
+1. Install Node.js 24 and Git.
+2. In this folder run npm ci.
+3. Run npm start and scan the QR code with Expo Go on the same network, or use npm run ios from a Mac with Xcode.
+4. Run npm run check to run TypeScript validation and generate the iOS JavaScript bundle.
 
-## Build an iOS IPA without a Mac
+## iOS build
 
-This repository is configured for [MobAI iOS Builder](https://github.com/MobAI-App/ios-builder), which dispatches an Xcode build to a GitHub Actions macOS runner.
+The repository uses GitHub Actions on a macOS runner to generate the native Expo project, compile it with Xcode, and package an IPA. The build used for device testing is currently unsigned.
 
-1. Install/update the `builder` CLI on Windows and authenticate with GitHub: `builder auth github`.
-2. Ensure `.github/workflows/ios-build.yml` has been initialized and pushed to the default branch with `builder init`.
-3. Run `builder ios build --unsigned` for a test artifact.
-4. An unsigned IPA is **not directly installable** on iPhone. Installing on-device requires a valid signing/provisioning workflow or a supported free-Apple-ID re-signing flow such as SideStore. App Store distribution requires Apple's paid developer program.
+An unsigned IPA is **not directly installable** on a standard iPhone. Device installation requires signing with a valid Apple development provisioning profile or a compatible free-Apple-ID sideloading workflow. App Store / TestFlight distribution requires Apple's paid developer program and distribution signing.
 
-## Build settings
+## Release metadata
 
-- Bundle ID: `com.karamg.allin`
-- iOS build: Expo managed workflow; native project generated on the macOS runner.
-- Build configuration: Release
-- CI provider: GitHub Actions
+- App: ALLIN
+- Version: 0.4.0
+- Bundle ID: com.karamg.allin
+- Minimum iOS: 16.4
+- Current build number: 11
+- Target: iPhone
 
-## Release notes
+## Release readiness
 
-- 0.4.0: Rebuilt the home dashboard, clearer daily journey, private Journal positioning, persistent puzzle progress, and refined iOS visual hierarchy. The current IPA is unsigned and is not an App Store submission build.
-
-## Roadmap
-
-1. Test the first release on the iPhone and fix usability/build issues.
-2. Add optional account sync and a real moderated community backend only after validating demand and selecting a genuinely free tier.
-3. Add more daily experiences and localization.
-4. Evaluate signing/distribution and monetization only after the product has users.
+A successful CI build verifies compilation and packaging, not real-device behavior. Before calling the app fully production-ready, install a signed build on a physical iPhone and verify every screen, persistence, puzzle rollover, reset, safe areas, haptics, and share-sheet behavior. App Store publication additionally requires the Apple account and signing steps described above.

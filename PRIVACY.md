@@ -5,7 +5,7 @@
 
 ## Summary
 
-ALLIN is currently a local-first iOS app. It does not require an account and does not send your profile, quiz answers, puzzle progress, poll choices, notes, or activity to an ALLIN server. The current release does not include advertising, analytics, or cross-app tracking.
+ALLIN is currently a local-first iOS app. It does not require an account and does not send your profile, quiz answers, puzzle progress, reflection choices, journal entries, or activity to an ALLIN server. The current release does not include advertising, analytics, or cross-app tracking.
 
 ## Information stored on your device
 
@@ -14,7 +14,7 @@ Depending on the features you use, ALLIN may store the following information loc
 - A display name or profile preferences you enter.
 - Your quiz answers and results.
 - Daily puzzle answers, progress, and streaks.
-- Your poll selections and locally saved posts or notes.
+- Your reflection selections and private journal entries.
 - App preferences and activity counters.
 
 This information is used only to operate the app's features on your device. It is stored in the app's local storage and is not available to the ALLIN developer through a server.
@@ -29,7 +29,7 @@ The current release does not use third-party advertising SDKs, analytics SDKs, o
 
 ## Data deletion
 
-Use the in-app **Reset local data** control in Profile to clear ALLIN's locally stored app data. Deleting the app also removes its local app container, subject to any device backups or operating-system retention managed by Apple.
+Use the in-app **Reset all local data** control in Profile to clear ALLIN's locally stored app data. Deleting the app also removes its local app container, subject to any device backups or operating-system retention managed by Apple.
 
 ## Children's privacy
 
