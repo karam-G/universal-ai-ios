@@ -55,6 +55,11 @@ struct ContentView: View {
             }
             .padding(.horizontal, 20).padding(.top, 12).padding(.bottom, 18)
         }
+        .overlay {
+            WhiteIslandAura(animate: animate, enabled: whiteAura)
+                .ignoresSafeArea()
+                .allowsHitTesting(false)
+        }
         .statusBarHidden(edgeToEdge)
         .persistentSystemOverlays(edgeToEdge ? .hidden : .visible)
         .onAppear {
@@ -70,25 +75,25 @@ struct WhiteIslandAura: View {
     var body: some View {
         GeometryReader { geometry in
             ZStack {
-                // A diffuse white backlight behind the black Dynamic Island silhouette.
+                // White illuminated strip is drawn directly over the center bridge position.
                 Capsule()
-                    .fill(Color.white.opacity(animate ? 0.46 : 0.28))
-                    .frame(width: 150, height: 43)
-                    .blur(radius: 18)
+                    .fill(Color.white.opacity(animate ? 0.82 : 0.62))
+                    .frame(width: 52, height: 17)
+                    .blur(radius: 7)
                 Capsule()
-                    .stroke(Color.white.opacity(animate ? 0.82 : 0.48), lineWidth: 1.4)
-                    .frame(width: 138, height: 37)
-                    .blur(radius: 2)
-                    .shadow(color: .white.opacity(0.9), radius: animate ? 13 : 7)
+                    .fill(
+                        LinearGradient(
+                            colors: [.white, Color(red: 0.91, green: 0.96, blue: 1.0), .white],
+                            startPoint: animate ? .leading : .top,
+                            endPoint: animate ? .trailing : .bottom
+                        )
+                    )
+                    .frame(width: 43, height: 11)
+                    .shadow(color: .white.opacity(0.95), radius: animate ? 8 : 4)
                 Capsule()
-                    .stroke(Color.white.opacity(0.34), lineWidth: 0.8)
-                    .frame(width: 158, height: 49)
-                    .blur(radius: 5)
-                Capsule()
-                    .fill(Color.white.opacity(animate ? 0.8 : 0.25))
-                    .frame(width: 38, height: 2)
-                    .blur(radius: 2)
-                    .offset(x: animate ? 25 : -25, y: 20)
+                    .fill(Color.white.opacity(animate ? 0.95 : 0.45))
+                    .frame(width: 22, height: 1.5)
+                    .offset(x: animate ? 9 : -9, y: -2)
             }
             .opacity(enabled ? 1 : 0)
             .position(x: geometry.size.width / 2, y: 31)
