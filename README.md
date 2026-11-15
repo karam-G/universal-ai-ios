@@ -42,7 +42,7 @@ An unsigned IPA is **not directly installable** on a standard iPhone. Device ins
 - Version: 0.4.0
 - Bundle ID: com.karamg.allin
 - Minimum iOS: 16.4
-- Current build number: 12
+- Current build number: 13
 - Target: iPhone
 
 ## Release readiness

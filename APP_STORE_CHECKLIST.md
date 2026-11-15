@@ -3,7 +3,7 @@
 ## Current candidate
 - Product: ALLIN
 - Version: 0.4.0
-- Build: 12 (dictionary-integrated release candidate)
+- Build: 13 (dictionary-integrated release candidate)
 - Bundle ID: com.karamg.allin
 - Minimum iOS: 16.4
 - Device target: iPhone
@@ -23,8 +23,8 @@
 - No login, online community, cloud sync, generative AI, analytics or advertising. Do not advertise these as available.
 
 ## Automated validation
-- TypeScript: passed on build 12 source.
-- Expo iOS bundle export: passed on build 12 source.
+- TypeScript and asset validation: passed on build 13 source.
+- Expo iOS bundle export: passed on build 13 source.
 - GitHub Actions iOS archive/IPA build: passed for build 10.
 - Physical iPhone installation and interactive QA: still required; CI IPAs are unsigned.
 - iOS Simulator smoke test workflow now selects the top-level generated workspace or project and runs against the current release branch.
