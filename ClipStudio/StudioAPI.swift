@@ -9,9 +9,9 @@ struct ClipStudioProject: Decodable, Identifiable {
     let title: String
     let sourceName: String
     let createdAt: String
-    let status: String
-    let stage: String?
-    let progress: Double?
+    var status: String
+    var stage: String?
+    var progress: Double?
 }
 
 struct ClipStudioCandidate: Decodable, Identifiable {
@@ -169,6 +169,11 @@ final class ClipStudioAPI: ObservableObject {
                 try validate(response, data)
                 let job = try JSONDecoder().decode(ClipStudioJob.self, from: data)
                 currentJob = job
+                if let index = projects.firstIndex(where: { $0.jobId == job.id }) {
+                    projects[index].status = job.status
+                    projects[index].stage = job.stage
+                    projects[index].progress = job.progress
+                }
                 if ["completed", "failed", "cancelled"].contains(job.status) {
                     connectionState = job.status == "completed" ? "Ready · clips rendered" : "Job \(job.status)"
                     return
