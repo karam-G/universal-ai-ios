@@ -189,7 +189,24 @@ struct RootView: View {
         ScrollView { VStack(alignment: .leading, spacing: 18) {
             Text("Clip library").font(.system(size: 28, weight: .bold, design: .rounded)).padding(.top, 16)
             Text("Your selected moments, ready to refine and export.").font(.system(size: 13)).foregroundStyle(StudioTheme.muted)
-            EmptyProjectCard(title: "Your best moments live here", subtitle: "Start an analysis to build your first clip collection.", icon: "film.stack")
+            if let outputs = api.currentJob?.outputs, !outputs.isEmpty {
+                ForEach(outputs) { output in
+                    Button { tab = .editor } label: {
+                        HStack(spacing: 12) {
+                            RoundedRectangle(cornerRadius: 12).fill(StudioTheme.mint.opacity(0.10)).frame(width: 48, height: 48)
+                                .overlay(Image(systemName: "play.rectangle.fill").foregroundStyle(StudioTheme.mint))
+                            VStack(alignment: .leading, spacing: 4) {
+                                Text(output.video).font(.system(size: 12, weight: .semibold)).lineLimit(1)
+                                Text(String(format: "%.1fs · Candidate #%d", max(0, (output.end ?? 0) - (output.start ?? 0)), output.candidateId)).font(.system(size: 10)).foregroundStyle(StudioTheme.muted)
+                            }
+                            Spacer()
+                            Image(systemName: output.qc?.passed == true ? "checkmark.seal.fill" : "chevron.right").foregroundStyle(output.qc?.passed == true ? StudioTheme.mint : StudioTheme.muted)
+                        }.padding(12).background(StudioTheme.panel, in: RoundedRectangle(cornerRadius: 15)).overlay(RoundedRectangle(cornerRadius: 15).stroke(StudioTheme.line))
+                    }.buttonStyle(.plain)
+                }
+            } else {
+                EmptyProjectCard(title: "Your best moments live here", subtitle: "Start an analysis to build your first clip collection.", icon: "film.stack")
+            }
         }.padding(.horizontal, 20) }
     }
     private var bottomBar: some View {
