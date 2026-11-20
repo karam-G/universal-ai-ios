@@ -204,3 +204,37 @@ struct ClipStudioConnectionPanel: View {
         }
     }
 }
+
+struct JobProgressCard: View {
+    let job: ClipStudioJob
+    private var progress: Double { min(1, max(0, (job.progress ?? 0) / 100)) }
+    var body: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            HStack {
+                Label("AION ENGINE", systemImage: "cpu").font(.system(size: 9, weight: .bold)).tracking(1.5).foregroundStyle(StudioTheme.mint)
+                Spacer()
+                Text("\(Int(progress * 100))%").font(.system(size: 12, weight: .bold, design: .monospaced)).foregroundStyle(StudioTheme.mint)
+            }
+            Text(job.message ?? job.stage ?? job.status.capitalized).font(.system(size: 14, weight: .semibold))
+            ProgressView(value: progress).tint(StudioTheme.mint)
+            HStack {
+                Text(job.status.uppercased()).font(.system(size: 9, weight: .bold)).tracking(1.2).foregroundStyle(StudioTheme.muted)
+                Spacer()
+                if let outputs = job.outputs { Text("\(outputs.count) CLIPS").font(.system(size: 9, weight: .bold)).foregroundStyle(StudioTheme.mint) }
+            }
+            if let outputs = job.outputs, !outputs.isEmpty {
+                ForEach(outputs) { output in
+                    HStack {
+                        Image(systemName: output.qc?.passed == true ? "checkmark.seal.fill" : "film").foregroundStyle(output.qc?.passed == true ? StudioTheme.mint : StudioTheme.orange)
+                        Text(output.video).font(.system(size: 11, weight: .medium)).lineLimit(1)
+                        Spacer()
+                        Text(output.qc?.passed == true ? "QC PASS" : "REVIEW").font(.system(size: 8, weight: .bold)).foregroundStyle(StudioTheme.muted)
+                    }
+                }
+            }
+        }
+        .padding(16)
+        .background(StudioTheme.panel, in: RoundedRectangle(cornerRadius: 18))
+        .overlay(RoundedRectangle(cornerRadius: 18).stroke(StudioTheme.mint.opacity(0.18)))
+    }
+}
