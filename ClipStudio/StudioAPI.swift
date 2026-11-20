@@ -75,11 +75,15 @@ final class ClipStudioAPI: ObservableObject {
         URL(string: backendURL.trimmingCharacters(in: .whitespacesAndNewlines).trimmingCharacters(in: CharacterSet(charactersIn: "/")))!
     }
 
+    private func endpoint(_ components: [String]) -> URL {
+        components.reduce(base) { $0.appendingPathComponent($1) }
+    }
+
     func pair(code: String) async {
         isBusy = true
         defer { isBusy = false }
         do {
-            let url = base.appendingPathComponent("v1/pair")
+            let url = endpoint(["v1", "pair"])
             var req = URLRequest(url: url)
             req.httpMethod = "POST"
             req.setValue("application/json", forHTTPHeaderField: "Content-Type")
@@ -96,7 +100,7 @@ final class ClipStudioAPI: ObservableObject {
 
     func checkConnection() async {
         do {
-            let url = base.appendingPathComponent("health")
+            let url = endpoint(["health"])
             let (_, response) = try await URLSession.shared.data(from: url)
             guard (response as? HTTPURLResponse)?.statusCode == 200 else { throw APIError.server("Backend health check failed") }
             connectionState = token == nil ? "Backend reachable · pair required" : "Backend reachable · paired"
@@ -112,7 +116,7 @@ final class ClipStudioAPI: ObservableObject {
         let access = file.startAccessingSecurityScopedResource()
         defer { if access { file.stopAccessingSecurityScopedResource() } }
         do {
-            let uploadURL = base.appendingPathComponent("v1/uploads")
+            let uploadURL = endpoint(["v1", "uploads"])
             var uploadRequest = URLRequest(url: uploadURL)
             uploadRequest.httpMethod = "POST"
             uploadRequest.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
@@ -122,7 +126,7 @@ final class ClipStudioAPI: ObservableObject {
             try validate(uploadResponse, uploadData)
             let upload = try JSONDecoder().decode(UploadResponse.self, from: uploadData)
 
-            let jobURL = base.appendingPathComponent("v1/jobs")
+            let jobURL = endpoint(["v1", "jobs"])
             var jobRequest = URLRequest(url: jobURL)
             jobRequest.httpMethod = "POST"
             jobRequest.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
@@ -149,7 +153,7 @@ final class ClipStudioAPI: ObservableObject {
     func loadProjects() async {
         guard let token else { return }
         do {
-            var request = URLRequest(url: base.appendingPathComponent("v1/projects"))
+            var request = URLRequest(url: endpoint(["v1", "projects"]))
             request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
             let (data, response) = try await URLSession.shared.data(for: request)
             try validate(response, data)
@@ -163,7 +167,7 @@ final class ClipStudioAPI: ObservableObject {
         guard let token else { return }
         while !Task.isCancelled {
             do {
-                var req = URLRequest(url: base.appendingPathComponent("v1/jobs/\(jobId)"))
+                var req = URLRequest(url: endpoint(["v1", "jobs", jobId]))
                 req.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
                 let (data, response) = try await URLSession.shared.data(for: req)
                 try validate(response, data)
@@ -188,7 +192,7 @@ final class ClipStudioAPI: ObservableObject {
         isBusy = true
         defer { isBusy = false }
         do {
-            let url = base.appendingPathComponent("v1/jobs/\(jobId)/render")
+            let url = endpoint(["v1", "jobs", jobId, "render"])
             var request = URLRequest(url: url)
             request.httpMethod = "POST"
             request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
@@ -208,7 +212,7 @@ final class ClipStudioAPI: ObservableObject {
 
     func downloadOutput(_ filename: String) async throws -> URL {
         guard let token else { throw APIError.server("Pair this iPhone first.") }
-        var request = URLRequest(url: base.appendingPathComponent("v1/jobs/\(currentJob?.id ?? "")/files/\(filename)"))
+        var request = URLRequest(url: endpoint(["v1", "jobs", currentJob?.id ?? "", "files", filename]))
         request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
         let (temporary, response) = try await URLSession.shared.download(for: request)
         guard let http = response as? HTTPURLResponse, (200..<300).contains(http.statusCode) else {
