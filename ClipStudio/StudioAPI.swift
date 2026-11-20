@@ -150,6 +150,21 @@ final class ClipStudioAPI: ObservableObject {
         }
     }
 
+    func downloadOutput(_ filename: String) async throws -> URL {
+        guard let token else { throw APIError.server("Pair this iPhone first.") }
+        var request = URLRequest(url: base.appendingPathComponent("v1/jobs/\(currentJob?.id ?? "")/files/\(filename)"))
+        request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+        let (temporary, response) = try await URLSession.shared.download(for: request)
+        guard let http = response as? HTTPURLResponse, (200..<300).contains(http.statusCode) else {
+            throw APIError.server("Could not download the rendered clip.")
+        }
+        let folder = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask)[0]
+        let destination = folder.appendingPathComponent("clipstudio-\(UUID().uuidString)-\(filename)")
+        try? FileManager.default.removeItem(at: destination)
+        try FileManager.default.moveItem(at: temporary, to: destination)
+        return destination
+    }
+
     func clearSession() {
         token = nil
         UserDefaults.standard.removeObject(forKey: "clipstudio_session")
