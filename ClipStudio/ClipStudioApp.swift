@@ -90,7 +90,7 @@ struct RootView: View {
                 Image(systemName: "waveform.path").font(.system(size: 17, weight: .bold)).foregroundStyle(StudioTheme.mint)
             }.frame(width: 38, height: 38).overlay(RoundedRectangle(cornerRadius: 12).stroke(StudioTheme.mint.opacity(0.24)))
             VStack(alignment: .leading, spacing: 1) {
-                Text("CLIPSTUDIO").font(.system(size: 14, weight: .black, design: .rounded)).tracking(2.1)
+                Text("AION CLIP STUDIO").font(.system(size: 13, weight: .black, design: .rounded)).tracking(1.3)
                 Text("AI POST-PRODUCTION").font(.system(size: 8, weight: .bold)).tracking(1.8).foregroundStyle(StudioTheme.muted)
             }
             Spacer()
