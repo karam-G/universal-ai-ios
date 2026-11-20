@@ -109,7 +109,7 @@ final class ClipStudioAPI: ObservableObject {
         } catch { connectionState = "Offline"; errorMessage = error.localizedDescription }
     }
 
-    func uploadAndStart(file: URL, mode: String, maxClips: Int, aspectRatio: String, captionStyle: String, rightsConfirmed: Bool) async {
+    func uploadAndStart(file: URL, title: String, mode: String, maxClips: Int, aspectRatio: String, captionStyle: String, rightsConfirmed: Bool) async {
         guard rightsConfirmed else { errorMessage = "Confirm you have permission to process this media."; return }
         guard let token else { errorMessage = "Pair this iPhone with your AION backend in Settings."; return }
         isBusy = true
@@ -134,7 +134,7 @@ final class ClipStudioAPI: ObservableObject {
             jobRequest.setValue("application/json", forHTTPHeaderField: "Content-Type")
             let body: [String: Any] = [
                 "uploadId": upload.uploadId, "filename": upload.filename,
-                "title": file.deletingPathExtension().lastPathComponent,
+                "title": title.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ? file.deletingPathExtension().lastPathComponent : title,
                 "mode": mode, "maxClips": maxClips, "aspectRatio": aspectRatio,
                 "captionStyle": captionStyle, "rightsConfirmed": true
             ]
