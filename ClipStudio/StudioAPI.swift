@@ -1,6 +1,7 @@
 import Foundation
 import SwiftUI
 import UniformTypeIdentifiers
+import Security
 
 struct ClipStudioProject: Decodable, Identifiable {
     let id: String
@@ -67,7 +68,7 @@ final class ClipStudioAPI: ObservableObject {
 
     init() {
         backendURL = UserDefaults.standard.string(forKey: "clipstudio_backend") ?? "https://aion-core.tail54b9ad.ts.net:8446"
-        token = UserDefaults.standard.string(forKey: "clipstudio_session")
+        token = TokenVault.load()
     }
 
     private var base: URL {
@@ -87,7 +88,7 @@ final class ClipStudioAPI: ObservableObject {
             try validate(response, data)
             let result = try JSONDecoder().decode(PairResponse.self, from: data)
             token = result.token
-            UserDefaults.standard.set(result.token, forKey: "clipstudio_session")
+            TokenVault.save(result.token)
             connectionState = "Paired · private backend"
             errorMessage = nil
         } catch { errorMessage = error.localizedDescription; connectionState = "Connection failed" }
@@ -194,7 +195,7 @@ final class ClipStudioAPI: ObservableObject {
 
     func clearSession() {
         token = nil
-        UserDefaults.standard.removeObject(forKey: "clipstudio_session")
+        TokenVault.delete()
         connectionState = "Not connected"
         currentJob = nil
     }
@@ -279,6 +280,48 @@ struct JobProgressCard: View {
         .padding(16)
         .background(StudioTheme.panel, in: RoundedRectangle(cornerRadius: 18))
         .overlay(RoundedRectangle(cornerRadius: 18).stroke(StudioTheme.mint.opacity(0.18)))
+    }
+}
+
+
+private enum TokenVault {
+    private static let service = "com.karam.clipstudio"
+    private static let account = "private-backend-session"
+
+    static func load() -> String? {
+        let query: [String: Any] = [
+            kSecClass as String: kSecClassGenericPassword,
+            kSecAttrService as String: service,
+            kSecAttrAccount as String: account,
+            kSecReturnData as String: true,
+            kSecMatchLimit as String: kSecMatchLimitOne
+        ]
+        var result: CFTypeRef?
+        guard SecItemCopyMatching(query as CFDictionary, &result) == errSecSuccess,
+              let data = result as? Data else { return nil }
+        return String(data: data, encoding: .utf8)
+    }
+
+    static func save(_ token: String) {
+        delete()
+        let data = Data(token.utf8)
+        let query: [String: Any] = [
+            kSecClass as String: kSecClassGenericPassword,
+            kSecAttrService as String: service,
+            kSecAttrAccount as String: account,
+            kSecValueData as String: data,
+            kSecAttrAccessible as String: kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly
+        ]
+        SecItemAdd(query as CFDictionary, nil)
+    }
+
+    static func delete() {
+        let query: [String: Any] = [
+            kSecClass as String: kSecClassGenericPassword,
+            kSecAttrService as String: service,
+            kSecAttrAccount as String: account
+        ]
+        SecItemDelete(query as CFDictionary)
     }
 }
 
