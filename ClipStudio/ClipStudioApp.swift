@@ -21,11 +21,12 @@ enum StudioTheme {
 }
 
 enum StudioTab: String, CaseIterable {
-    case studio = "Studio", projects = "Projects", library = "Library", settings = "Settings"
+    case studio = "Studio", projects = "Projects", editor = "Editor", library = "Library", settings = "Settings"
     var icon: String {
         switch self {
         case .studio: "square.grid.2x2.fill"
         case .projects: "film.stack"
+        case .editor: "timeline.selection"
         case .library: "square.stack.3d.up"
         case .settings: "slider.horizontal.3"
         }
@@ -56,6 +57,7 @@ struct RootView: View {
                     switch tab {
                     case .studio: dashboard
                     case .projects: projectsView
+                    case .editor: ClipStudioEditorView()
                     case .library: libraryView
                     case .settings: SettingsView()
                     }
@@ -179,6 +181,7 @@ struct RootView: View {
         ScrollView { VStack(alignment: .leading, spacing: 18) {
             Text("Your projects").font(.system(size: 28, weight: .bold, design: .rounded)).padding(.top, 16)
             Text("Every analysis, edit and export in one place.").font(.system(size: 13)).foregroundStyle(StudioTheme.muted)
+            if let job = api.currentJob { JobProgressCard(job: job) }
             if jobs.isEmpty { EmptyProjectCard() } else { ForEach(jobs) { ProjectRow(job: $0) } }
         }.padding(.horizontal, 20) }
     }
