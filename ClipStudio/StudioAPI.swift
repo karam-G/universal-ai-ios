@@ -54,7 +54,7 @@ final class ClipStudioAPI: ObservableObject {
     @Published private(set) var isBusy = false
 
     init() {
-        backendURL = UserDefaults.standard.string(forKey: "clipstudio_backend") ?? "http://100.71.68.18:8792"
+        backendURL = UserDefaults.standard.string(forKey: "clipstudio_backend") ?? "https://aion-core.tail54b9ad.ts.net:8446"
         token = UserDefaults.standard.string(forKey: "clipstudio_session")
     }
 
@@ -185,7 +185,7 @@ struct ClipStudioConnectionPanel: View {
                 Spacer()
                 Button("Test") { Task { await api.checkConnection() } }.font(.system(size: 12, weight: .bold)).foregroundStyle(StudioTheme.mint)
             }
-            TextField("http://100.71.68.18:8792", text: $api.backendURL)
+            TextField("https://aion-core.tail54b9ad.ts.net:8446", text: $api.backendURL)
                 .textInputAutocapitalization(.never).autocorrectionDisabled().keyboardType(.URL)
                 .font(.system(size: 13, design: .monospaced)).padding(12)
                 .background(StudioTheme.panel2, in: RoundedRectangle(cornerRadius: 11))
