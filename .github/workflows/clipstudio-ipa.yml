@@ -6,6 +6,9 @@ on:
     paths:
       - 'ClipStudio/**'
       - '.github/workflows/clipstudio-ipa.yml'
+concurrency:
+  group: clipstudio-ios-${{ github.ref }}
+  cancel-in-progress: true
 permissions:
   contents: read
 jobs:
