@@ -43,6 +43,7 @@ Supported inputs: MP4, MOV, MKV, WebM, M4V. Maximum upload: 8 GB. Full audiovisu
 - `POST /v1/uploads`
 - `POST /v1/jobs`
 - `GET /v1/jobs/:id`
+- `POST /v1/jobs/:id/render`
 - `POST /v1/jobs/:id/cancel`
 - `GET /v1/jobs/:id/files/:filename`
 
