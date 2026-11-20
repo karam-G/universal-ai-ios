@@ -14,6 +14,12 @@ struct ClipStudioEditorView: View {
     @State private var isExporting = false
     @State private var exportedURL: URL?
     @State private var errorText: String?
+    @State private var aspectRatio = "9:16"
+    @State private var captionStyle = "pro"
+    @State private var hook = ""
+    @State private var watermark = ""
+    @State private var blurBackground = true
+    @State private var soundDesign = true
 
     private var outputs: [ClipStudioOutput] { api.currentJob?.outputs ?? [] }
 
@@ -74,6 +80,40 @@ struct ClipStudioEditorView: View {
                         }
                         Text("Current edit: trim in/out. Captions, framing and audio polish are baked into the generated master.").font(.system(size: 10)).foregroundStyle(StudioTheme.muted)
                     }.padding(16).background(StudioTheme.panel,in:RoundedRectangle(cornerRadius:18)).overlay(RoundedRectangle(cornerRadius:18).stroke(StudioTheme.line))
+                }
+
+                if let selectedOutput {
+                    VStack(alignment: .leading, spacing: 13) {
+                        Text("EDIT DIRECTION").font(.system(size: 10, weight: .bold)).tracking(1.8).foregroundStyle(StudioTheme.muted)
+                        HStack {
+                            Text("Canvas").font(.system(size: 12, weight: .semibold))
+                            Spacer()
+                            Picker("Canvas", selection: $aspectRatio) {
+                                Text("9:16").tag("9:16"); Text("16:9").tag("16:9")
+                                Text("1:1").tag("1:1"); Text("4:5").tag("4:5")
+                            }.pickerStyle(.menu).tint(StudioTheme.mint)
+                        }
+                        VStack(alignment: .leading, spacing: 6) {
+                            Text("CAPTION PRESET").font(.system(size: 9, weight: .bold)).tracking(1.3).foregroundStyle(StudioTheme.muted)
+                            Picker("Caption preset", selection: $captionStyle) {
+                                Text("Pro").tag("pro"); Text("Gaming").tag("gaming")
+                                Text("Podcast").tag("podcast"); Text("Clean").tag("clean")
+                            }.pickerStyle(.segmented)
+                        }
+                        TextField("Opening hook (optional)", text: $hook).font(.system(size: 12)).padding(12).background(StudioTheme.panel2, in: RoundedRectangle(cornerRadius: 10))
+                        TextField("Creator watermark (optional)", text: $watermark).font(.system(size: 12)).padding(12).background(StudioTheme.panel2, in: RoundedRectangle(cornerRadius: 10))
+                        Toggle("Blurred cinematic background", isOn: $blurBackground).tint(StudioTheme.mint).font(.system(size: 12))
+                        Toggle("Original procedural sound accents", isOn: $soundDesign).tint(StudioTheme.mint).font(.system(size: 12))
+                        Button {
+                            Task {
+                                await api.rerender(jobId: api.currentJob?.id ?? "", candidateId: selectedOutput.candidateId, aspectRatio: aspectRatio, captionStyle: captionStyle, hook: hook, watermark: watermark, blurBackground: blurBackground, soundDesign: soundDesign)
+                            }
+                        } label: {
+                            HStack { Image(systemName: "wand.and.stars"); Text(api.isBusy ? "Rendering new version…" : "Render new version"); Spacer(); Image(systemName: "arrow.clockwise") }
+                                .font(.system(size: 13, weight: .bold)).foregroundStyle(StudioTheme.bg).padding(14).background(StudioTheme.mint, in: RoundedRectangle(cornerRadius: 12))
+                        }.disabled(api.isBusy || api.currentJob == nil)
+                        Text("A new version is created. Previous exports are preserved.").font(.system(size: 10)).foregroundStyle(StudioTheme.muted)
+                    }.padding(16).background(StudioTheme.panel, in: RoundedRectangle(cornerRadius: 18)).overlay(RoundedRectangle(cornerRadius: 18).stroke(StudioTheme.line))
                 }
 
                 VStack(alignment: .leading, spacing: 12) {
