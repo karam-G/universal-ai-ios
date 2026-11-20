@@ -69,7 +69,7 @@ struct RootView: View {
                     .transition(.move(edge: .bottom).combined(with: .opacity))
             }
         }
-        .sheet(isPresented: $showNewProject) { NewProjectSheet(sourceURL: $sourceURL, selectedStyle: $selectedStyle, clipCount: $clipCount, rightsConfirmed: $rightsConfirmed, onChooseFile: { showFilePicker = true }, onStart: startAnalysis).presentationDetents([.large]).presentationDragIndicator(.visible) }
+        .sheet(isPresented: $showNewProject) { NewProjectSheet(sourceURL: $sourceURL, selectedStyle: $selectedStyle, clipCount: $clipCount, rightsConfirmed: $rightsConfirmed, hasSelectedFile: selectedMedia != nil, onChooseFile: { showFilePicker = true }, onStart: startAnalysis).presentationDetents([.large]).presentationDragIndicator(.visible) }
         .onAppear { Task { await api.loadProjects() } }
         .fileImporter(isPresented: $showFilePicker, allowedContentTypes: [.movie, .mpeg4Movie, .quickTimeMovie], allowsMultipleSelection: false) { result in
             switch result {
@@ -299,6 +299,7 @@ struct NewProjectSheet: View {
     @Binding var selectedStyle: String
     @Binding var clipCount: String
     @Binding var rightsConfirmed: Bool
+    let hasSelectedFile: Bool
     let onChooseFile: () -> Void
     let onStart: () -> Void
     @Environment(\.dismiss) private var dismiss
@@ -311,9 +312,9 @@ struct NewProjectSheet: View {
                     HStack { VStack(alignment: .leading, spacing: 5) { Text("NEW PROJECT").font(.system(size: 10, weight: .bold)).tracking(2).foregroundStyle(StudioTheme.mint); Text("Let AI find the moments.").font(.system(size: 25, weight: .bold, design: .rounded)) }; Spacer(); Button { dismiss() } label: { Image(systemName: "xmark").foregroundStyle(.white.opacity(0.7)).padding(10).background(.white.opacity(0.07), in: Circle()) } }
                     VStack(alignment: .leading, spacing: 10) {
                         Text("VIDEO SOURCE").font(.system(size: 10, weight: .bold)).tracking(1.7).foregroundStyle(StudioTheme.muted)
-                        HStack(spacing: 10) { Image(systemName: "link").foregroundStyle(StudioTheme.mint); TextField("Paste a YouTube or video link", text: $sourceURL).keyboardType(.URL).textInputAutocapitalization(.never).autocorrectionDisabled().font(.system(size: 14)) }.padding(15).background(StudioTheme.panel, in: RoundedRectangle(cornerRadius: 14)).overlay(RoundedRectangle(cornerRadius: 14).stroke(StudioTheme.line))
+                        HStack(spacing: 10) { Image(systemName: "textformat").foregroundStyle(StudioTheme.mint); TextField("Project name (optional)", text: $sourceURL).textInputAutocapitalization(.words).autocorrectionDisabled().font(.system(size: 14)) }.padding(15).background(StudioTheme.panel, in: RoundedRectangle(cornerRadius: 14)).overlay(RoundedRectangle(cornerRadius: 14).stroke(StudioTheme.line))
                         Text("Import a permitted video file. A YouTube URL alone cannot provide raw audiovisual access; direct URL ingestion is a separate future integration.").font(.system(size: 11)).foregroundStyle(StudioTheme.muted)
-                        Button(action: onChooseFile) { Label(sourceURL.isEmpty ? "Choose video from Files" : "Change selected video", systemImage: "folder.badge.plus").font(.system(size: 13, weight: .semibold)).foregroundStyle(StudioTheme.mint).frame(maxWidth: .infinity).padding(14).background(StudioTheme.mint.opacity(0.08), in: RoundedRectangle(cornerRadius: 12)) }
+                        Button(action: onChooseFile) { Label(hasSelectedFile ? "Change selected video" : "Choose video from Files", systemImage: "folder.badge.plus").font(.system(size: 13, weight: .semibold)).foregroundStyle(StudioTheme.mint).frame(maxWidth: .infinity).padding(14).background(StudioTheme.mint.opacity(0.08), in: RoundedRectangle(cornerRadius: 12)) }
                     }
                     VStack(alignment: .leading, spacing: 11) {
                         Text("EDITING DIRECTION").font(.system(size: 10, weight: .bold)).tracking(1.7).foregroundStyle(StudioTheme.muted)
