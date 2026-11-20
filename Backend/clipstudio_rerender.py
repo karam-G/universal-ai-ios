@@ -15,7 +15,8 @@ def main():
     p.add_argument("--job-dir",required=True)
     p.add_argument("--clip-root",required=True)
     p.add_argument("--candidate-id",type=int,required=True)
-    p.add_argument("--options",required=True)
+    p.add_argument("--options",default="{}")
+    p.add_argument("--options-file")
     a=p.parse_args()
     job=Path(a.job_dir).resolve();root=Path(a.clip_root).resolve()
     scripts=root/"scripts";out=job/"outputs";out.mkdir(parents=True,exist_ok=True)
@@ -32,7 +33,8 @@ def main():
     with decisions.open(encoding="utf-8-sig",newline="") as f:
         approved={int(r["candidate_id"]):r.get("decision","").upper() for r in csv.DictReader(f)}
     if approved.get(a.candidate_id)!="APPROVE": raise RuntimeError("Only AI-selected approved candidates can be re-rendered")
-    o=json.loads(a.options);ratio=o.get("aspectRatio","9:16")
+    options_text=Path(a.options_file).read_text(encoding="utf-8") if a.options_file else a.options
+    o=json.loads(options_text);ratio=o.get("aspectRatio","9:16")
     if ratio not in ("9:16","16:9","1:1","4:5","4:3","3:4"): raise RuntimeError("Unsupported aspect ratio")
     style=o.get("captionStyle","pro")
     if style not in ("gaming","pro","podcast","clean"): raise RuntimeError("Unsupported caption preset")
