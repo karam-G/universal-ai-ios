@@ -1,0 +1,31 @@
+name: Build ClipStudio iOS IPA
+on:
+  workflow_dispatch:
+  push:
+    branches: [aion-clip-studio]
+    paths:
+      - 'ClipStudio/**'
+      - '.github/workflows/clipstudio-ipa.yml'
+permissions:
+  contents: read
+jobs:
+  build:
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build native iOS app
+        run: |
+          set -euo pipefail
+          xcodebuild -project ClipStudio/ClipStudio.xcodeproj -scheme ClipStudio -configuration Release -sdk iphoneos -destination 'generic/platform=iOS' -derivedDataPath "$RUNNER_TEMP/ClipStudioDerived" CODE_SIGNING_ALLOWED=NO build
+          APP="$RUNNER_TEMP/ClipStudioDerived/Build/Products/Release-iphoneos/ClipStudio.app"
+          test -d "$APP"
+          mkdir -p "$RUNNER_TEMP/package/Payload"
+          cp -R "$APP" "$RUNNER_TEMP/package/Payload/"
+          cd "$RUNNER_TEMP/package"
+          /usr/bin/zip -qry "$GITHUB_WORKSPACE/ClipStudio-unsigned.ipa" Payload
+          test -s "$GITHUB_WORKSPACE/ClipStudio-unsigned.ipa"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ClipStudio-unsigned-ipa
+          path: ClipStudio-unsigned.ipa
+          retention-days: 14
