@@ -75,7 +75,7 @@ struct RootView: View {
             switch result {
             case .success(let urls):
                 selectedMedia = urls.first
-                if let file = urls.first { sourceURL = file.lastPathComponent; toast = "Selected · \(file.lastPathComponent)" }
+                if let file = urls.first { sourceURL = file.deletingPathExtension().lastPathComponent; toast = "Selected · \(file.lastPathComponent)" }
             case .failure(let error): toast = error.localizedDescription
             }
         }
