@@ -232,7 +232,7 @@ struct RootView: View {
         let mode: String = selectedStyle == "Podcast" ? "podcast" : selectedStyle == "High Energy" ? "gaming" : selectedStyle == "Cinematic" ? "universal" : "universal"
         let count = clipCount == "Top 5" ? 5 : clipCount == "Top 10" ? 10 : 8
         Task {
-            await api.uploadAndStart(file: file, mode: mode, maxClips: count, aspectRatio: "9:16", captionStyle: mode == "podcast" ? "podcast" : "pro", rightsConfirmed: rightsConfirmed)
+            await api.uploadAndStart(file: file, title: sourceURL, mode: mode, maxClips: count, aspectRatio: "9:16", captionStyle: mode == "podcast" ? "podcast" : "pro", rightsConfirmed: rightsConfirmed)
             toast = api.errorMessage ?? api.connectionState
             try? await Task.sleep(for: .seconds(3))
             toast = nil
@@ -312,7 +312,7 @@ struct NewProjectSheet: View {
                     VStack(alignment: .leading, spacing: 10) {
                         Text("VIDEO SOURCE").font(.system(size: 10, weight: .bold)).tracking(1.7).foregroundStyle(StudioTheme.muted)
                         HStack(spacing: 10) { Image(systemName: "link").foregroundStyle(StudioTheme.mint); TextField("Paste a YouTube or video link", text: $sourceURL).keyboardType(.URL).textInputAutocapitalization(.never).autocorrectionDisabled().font(.system(size: 14)) }.padding(15).background(StudioTheme.panel, in: RoundedRectangle(cornerRadius: 14)).overlay(RoundedRectangle(cornerRadius: 14).stroke(StudioTheme.line))
-                        Text("A link alone cannot provide raw video access. Choose a permitted local media file for full audiovisual analysis.").font(.system(size: 11)).foregroundStyle(StudioTheme.muted)
+                        Text("Import a permitted video file. A YouTube URL alone cannot provide raw audiovisual access; direct URL ingestion is a separate future integration.").font(.system(size: 11)).foregroundStyle(StudioTheme.muted)
                         Button(action: onChooseFile) { Label(sourceURL.isEmpty ? "Choose video from Files" : "Change selected video", systemImage: "folder.badge.plus").font(.system(size: 13, weight: .semibold)).foregroundStyle(StudioTheme.mint).frame(maxWidth: .infinity).padding(14).background(StudioTheme.mint.opacity(0.08), in: RoundedRectangle(cornerRadius: 12)) }
                     }
                     VStack(alignment: .leading, spacing: 11) {
