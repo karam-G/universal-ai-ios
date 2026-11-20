@@ -10,7 +10,7 @@ $env:CLIPSTUDIO_PORT='8792'
 node .\clipstudio-server.js
 ```
 
-The service prints a one-time six-digit pairing code at startup. Enter that code in ClipStudio on the iPhone. Pairing creates a random bearer session held by the server and stored in the iOS Keychain. Sessions expire after 30 days or when the service restarts.
+The service prints a one-time six-digit pairing code at startup. Enter that code in ClipStudio on the iPhone. Pairing creates a random bearer session held by the server and stored in the iOS Keychain. Sessions expire after 30 days. The server stores only SHA-256 session-token hashes, so pairing survives backend restarts.
 
 ## Private HTTPS ingress
 
