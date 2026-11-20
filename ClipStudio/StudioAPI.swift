@@ -150,7 +150,7 @@ final class ClipStudioAPI: ObservableObject {
         guard let token else { return }
         do {
             var request = URLRequest(url: base.appendingPathComponent("v1/projects"))
-            request.setValue("Bearer \\(token)", forHTTPHeaderField: "Authorization")
+            request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
             let (data, response) = try await URLSession.shared.data(for: request)
             try validate(response, data)
             let result = try JSONDecoder().decode(ProjectsResponse.self, from: data)
@@ -203,6 +203,7 @@ final class ClipStudioAPI: ObservableObject {
     private func validate(_ response: URLResponse, _ data: Data) throws {
         guard let http = response as? HTTPURLResponse else { throw APIError.server("Invalid server response") }
         guard (200..<300).contains(http.statusCode) else {
+            if http.statusCode == 401 { token = nil; TokenVault.delete(); connectionState = "Pairing required" }
             let message = (try? JSONSerialization.jsonObject(with: data) as? [String: Any])?["message"] as? String
             throw APIError.server(message ?? "Server returned HTTP \(http.statusCode)")
         }
