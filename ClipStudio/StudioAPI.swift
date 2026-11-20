@@ -183,6 +183,29 @@ final class ClipStudioAPI: ObservableObject {
         }
     }
 
+    func rerender(jobId: String, candidateId: Int, aspectRatio: String, captionStyle: String, hook: String, watermark: String, blurBackground: Bool, soundDesign: Bool) async {
+        guard let token else { errorMessage = "Pair this iPhone first."; return }
+        isBusy = true
+        defer { isBusy = false }
+        do {
+            let url = base.appendingPathComponent("v1/jobs/\(jobId)/render")
+            var request = URLRequest(url: url)
+            request.httpMethod = "POST"
+            request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+            request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+            let body: [String: Any] = [
+                "candidateId": candidateId, "aspectRatio": aspectRatio,
+                "captionStyle": captionStyle, "hook": hook, "watermark": watermark,
+                "blurBackground": blurBackground, "soundDesign": soundDesign
+            ]
+            request.httpBody = try JSONSerialization.data(withJSONObject: body)
+            let (data, response) = try await URLSession.shared.data(for: request)
+            try validate(response, data)
+            connectionState = "Rendering revised clip"
+            await poll(jobId: jobId)
+        } catch { errorMessage = error.localizedDescription }
+    }
+
     func downloadOutput(_ filename: String) async throws -> URL {
         guard let token else { throw APIError.server("Pair this iPhone first.") }
         var request = URLRequest(url: base.appendingPathComponent("v1/jobs/\(currentJob?.id ?? "")/files/\(filename)"))
