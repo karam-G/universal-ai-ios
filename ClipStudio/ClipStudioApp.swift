@@ -26,7 +26,7 @@ enum StudioTab: String, CaseIterable {
         switch self {
         case .studio: "square.grid.2x2.fill"
         case .projects: "film.stack"
-        case .editor: "timeline.selection"
+        case .editor: "scissors"
         case .library: "square.stack.3d.up"
         case .settings: "slider.horizontal.3"
         }
@@ -122,7 +122,7 @@ struct RootView: View {
                 HStack(spacing: 10) {
                     MetricCard(value: "\(api.projects.count)", label: "PROJECTS", icon: "square.stack.3d.up", tint: StudioTheme.blue)
                     MetricCard(value: "AI", label: "EDITOR", icon: "brain.head.profile", tint: StudioTheme.violet)
-                    MetricCard(value: "4K", label: "EXPORT", icon: "4k.tv", tint: StudioTheme.orange)
+                    MetricCard(value: "1080", label: "EXPORT", icon: "4k.tv", tint: StudioTheme.orange)
                 }
 
                 HStack {
@@ -156,7 +156,7 @@ struct RootView: View {
                 Text("01 / CREATE").font(.system(size: 9, weight: .bold, design: .monospaced)).foregroundStyle(.white.opacity(0.4))
             }
             VStack(alignment: .leading, spacing: 7) {
-                Text("One link in.").font(.system(size: 27, weight: .bold, design: .rounded)).tracking(-0.8)
+                Text("One video in.").font(.system(size: 27, weight: .bold, design: .rounded)).tracking(-0.8)
                 Text("A library of moments out.").font(.system(size: 27, weight: .bold, design: .rounded)).tracking(-0.8).foregroundStyle(LinearGradient(colors: [StudioTheme.mint, StudioTheme.blue], startPoint: .leading, endPoint: .trailing))
                 Text("AI finds the story, shapes the edit and prepares every clip for the feed.").font(.system(size: 13)).foregroundStyle(.white.opacity(0.62)).lineSpacing(4).padding(.top, 2)
             }
@@ -213,7 +213,7 @@ struct RootView: View {
         showNewProject = false
         tab = .projects
         let mode: String = selectedStyle == "Podcast" ? "podcast" : selectedStyle == "High Energy" ? "gaming" : selectedStyle == "Cinematic" ? "universal" : "universal"
-        let count = clipCount == "Top 5" ? 5 : clipCount == "Top 10" ? 10 : clipCount == "Top 20" ? 10 : 8
+        let count = clipCount == "Top 5" ? 5 : clipCount == "Top 10" ? 10 : 8
         Task {
             await api.uploadAndStart(file: file, mode: mode, maxClips: count, aspectRatio: "9:16", captionStyle: mode == "podcast" ? "podcast" : "pro", rightsConfirmed: rightsConfirmed)
             toast = api.errorMessage ?? api.connectionState
@@ -309,7 +309,7 @@ struct NewProjectSheet: View {
                     }
                     VStack(alignment: .leading, spacing: 10) {
                         Text("CLIP SELECTION").font(.system(size: 10, weight: .bold)).tracking(1.7).foregroundStyle(StudioTheme.muted)
-                        Picker("Clip selection", selection: $clipCount) { Text("Best moments").tag("Best moments"); Text("Top 5").tag("Top 5"); Text("Top 10").tag("Top 10"); Text("Top 20").tag("Top 20") }.pickerStyle(.segmented)
+                        Picker("Clip selection", selection: $clipCount) { Text("Best moments").tag("Best moments"); Text("Top 5").tag("Top 5"); Text("Top 10").tag("Top 10") }.pickerStyle(.segmented)
                     }
                     Toggle(isOn: $rightsConfirmed) { Text("I own this media or have permission to process it.").font(.system(size: 12, weight: .medium)) }.tint(StudioTheme.mint)
                     Button(action: onStart) { HStack { Text("Start intelligent analysis"); Spacer(); Image(systemName: "arrow.right") }.font(.system(size: 14, weight: .bold)).foregroundStyle(StudioTheme.bg).padding(17).background(StudioTheme.mint, in: RoundedRectangle(cornerRadius: 15)) }
