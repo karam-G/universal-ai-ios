@@ -69,6 +69,7 @@ final class ClipStudioAPI: ObservableObject {
     init() {
         backendURL = UserDefaults.standard.string(forKey: "clipstudio_backend") ?? "https://aion-core.tail54b9ad.ts.net:8446"
         token = TokenVault.load()
+        if token != nil { connectionState = "Paired · private backend" }
     }
 
     private var base: URL {
