@@ -1,9 +1,10 @@
 import SwiftUI
+import UniformTypeIdentifiers
 
 @main
 struct ClipStudioApp: App {
     var body: some Scene {
-        WindowGroup { RootView().preferredColorScheme(.dark) }
+        WindowGroup { RootView().environmentObject(ClipStudioAPI()).preferredColorScheme(.dark) }
     }
 }
 
@@ -32,7 +33,11 @@ enum StudioTab: String, CaseIterable {
 }
 
 struct RootView: View {
+    @EnvironmentObject private var api: ClipStudioAPI
     @State private var tab: StudioTab = .studio
+    @State private var showFilePicker = false
+    @State private var selectedMedia: URL?
+    @State private var rightsConfirmed = false
     @State private var showNewProject = false
     @State private var sourceURL = ""
     @State private var selectedStyle = "Smart Auto"
@@ -63,7 +68,15 @@ struct RootView: View {
                     .transition(.move(edge: .bottom).combined(with: .opacity))
             }
         }
-        .sheet(isPresented: $showNewProject) { NewProjectSheet(sourceURL: $sourceURL, selectedStyle: $selectedStyle, clipCount: $clipCount, onStart: startAnalysis) .presentationDetents([.large]).presentationDragIndicator(.visible) }
+        .sheet(isPresented: $showNewProject) { NewProjectSheet(sourceURL: $sourceURL, selectedStyle: $selectedStyle, clipCount: $clipCount, rightsConfirmed: $rightsConfirmed, onChooseFile: { showFilePicker = true }, onStart: startAnalysis).presentationDetents([.large]).presentationDragIndicator(.visible) }
+        .fileImporter(isPresented: $showFilePicker, allowedContentTypes: [.movie, .mpeg4Movie, .quickTimeMovie], allowsMultipleSelection: false) { result in
+            switch result {
+            case .success(let urls):
+                selectedMedia = urls.first
+                if let file = urls.first { sourceURL = file.lastPathComponent; toast = "Selected · \(file.lastPathComponent)" }
+            case .failure(let error): toast = error.localizedDescription
+            }
+        }
         .animation(.spring(response: 0.35, dampingFraction: 0.86), value: tab)
         .animation(.spring(response: 0.35, dampingFraction: 0.86), value: toast)
     }
@@ -102,6 +115,7 @@ struct RootView: View {
                 }.padding(.top, 13)
 
                 newProjectHero
+                if let job = api.currentJob { JobProgressCard(job: job) }
 
                 HStack(spacing: 10) {
                     MetricCard(value: "\(jobs.count)", label: "PROJECTS", icon: "square.stack.3d.up", tint: StudioTheme.blue)
@@ -188,14 +202,24 @@ struct RootView: View {
         }.padding(.horizontal, 8).padding(.top, 5).background(StudioTheme.bg.opacity(0.98)).overlay(alignment: .top) { Rectangle().fill(StudioTheme.line).frame(height: 1) }
     }
     private func startAnalysis() {
-        let trimmed = sourceURL.trimmingCharacters(in: .whitespacesAndNewlines)
-        guard let url = URL(string: trimmed), ["http", "https"].contains(url.scheme?.lowercased() ?? "") else { toast = "Enter a valid video URL"; return }
-        let job = ClipJob(id: UUID(), title: url.host ?? "New video project", source: trimmed, status: "Queued", created: Date())
-        jobs.insert(job, at: 0)
+        guard let file = selectedMedia else {
+            toast = "Choose a video file from Files. URL-only processing is not enabled yet."
+            return
+        }
+        guard rightsConfirmed else { toast = "Confirm your rights to process this media."; return }
         showNewProject = false
         tab = .projects
-        toast = "Project created · backend connection pending"
-        DispatchQueue.main.asyncAfter(deadline: .now() + 2.4) { toast = nil }
+        let mode: String = selectedStyle == "Podcast" ? "podcast" : selectedStyle == "High Energy" ? "gaming" : selectedStyle == "Cinematic" ? "universal" : "universal"
+        let count = clipCount == "Top 5" ? 5 : clipCount == "Top 10" ? 10 : clipCount == "Top 20" ? 10 : 8
+        Task {
+            await api.uploadAndStart(file: file, mode: mode, maxClips: count, aspectRatio: "9:16", captionStyle: mode == "podcast" ? "podcast" : "pro", rightsConfirmed: rightsConfirmed)
+            if let job = api.currentJob {
+                jobs.insert(ClipJob(id: UUID(), title: file.deletingPathExtension().lastPathComponent, source: file.lastPathComponent, status: job.status.capitalized, created: Date()), at: 0)
+            }
+            toast = api.errorMessage ?? api.connectionState
+            try? await Task.sleep(for: .seconds(3))
+            toast = nil
+        }
     }
 }
 
@@ -257,6 +281,8 @@ struct NewProjectSheet: View {
     @Binding var sourceURL: String
     @Binding var selectedStyle: String
     @Binding var clipCount: String
+    @Binding var rightsConfirmed: Bool
+    let onChooseFile: () -> Void
     let onStart: () -> Void
     @Environment(\.dismiss) private var dismiss
     private let styles = ["Smart Auto", "Cinematic", "High Energy", "Podcast"]
@@ -269,7 +295,8 @@ struct NewProjectSheet: View {
                     VStack(alignment: .leading, spacing: 10) {
                         Text("VIDEO SOURCE").font(.system(size: 10, weight: .bold)).tracking(1.7).foregroundStyle(StudioTheme.muted)
                         HStack(spacing: 10) { Image(systemName: "link").foregroundStyle(StudioTheme.mint); TextField("Paste a YouTube or video link", text: $sourceURL).keyboardType(.URL).textInputAutocapitalization(.never).autocorrectionDisabled().font(.system(size: 14)) }.padding(15).background(StudioTheme.panel, in: RoundedRectangle(cornerRadius: 14)).overlay(RoundedRectangle(cornerRadius: 14).stroke(StudioTheme.line))
-                        Text("Supported sources depend on permitted media access.").font(.system(size: 11)).foregroundStyle(StudioTheme.muted)
+                        Text("A link alone cannot provide raw video access. Choose a permitted local media file for full audiovisual analysis.").font(.system(size: 11)).foregroundStyle(StudioTheme.muted)
+                        Button(action: onChooseFile) { Label(sourceURL.isEmpty ? "Choose video from Files" : "Change selected video", systemImage: "folder.badge.plus").font(.system(size: 13, weight: .semibold)).foregroundStyle(StudioTheme.mint).frame(maxWidth: .infinity).padding(14).background(StudioTheme.mint.opacity(0.08), in: RoundedRectangle(cornerRadius: 12)) }
                     }
                     VStack(alignment: .leading, spacing: 11) {
                         Text("EDITING DIRECTION").font(.system(size: 10, weight: .bold)).tracking(1.7).foregroundStyle(StudioTheme.muted)
@@ -284,6 +311,7 @@ struct NewProjectSheet: View {
                         Text("CLIP SELECTION").font(.system(size: 10, weight: .bold)).tracking(1.7).foregroundStyle(StudioTheme.muted)
                         Picker("Clip selection", selection: $clipCount) { Text("Best moments").tag("Best moments"); Text("Top 5").tag("Top 5"); Text("Top 10").tag("Top 10"); Text("Top 20").tag("Top 20") }.pickerStyle(.segmented)
                     }
+                    Toggle(isOn: $rightsConfirmed) { Text("I own this media or have permission to process it.").font(.system(size: 12, weight: .medium)) }.tint(StudioTheme.mint)
                     Button(action: onStart) { HStack { Text("Start intelligent analysis"); Spacer(); Image(systemName: "arrow.right") }.font(.system(size: 14, weight: .bold)).foregroundStyle(StudioTheme.bg).padding(17).background(StudioTheme.mint, in: RoundedRectangle(cornerRadius: 15)) }
                 }.padding(22)
             }
@@ -294,18 +322,17 @@ struct NewProjectSheet: View {
     }
 }
 struct SettingsView: View {
-    @AppStorage("clipstudio_backend") private var backend = "https://aion-core.tail54b9ad.ts.net"
     @State private var showInfo = false
     var body: some View {
         Form {
             Section("CONNECTION") {
-                TextField("AION backend URL", text: $backend).textInputAutocapitalization(.never).autocorrectionDisabled().keyboardType(.URL)
-                Text("Private connection. Your HP must be awake and Tailscale connected.").font(.system(size: 11)).foregroundStyle(StudioTheme.muted)
+                ClipStudioConnectionPanel()
+                Text("Private Tailscale connection. Keep the HP awake and connected. Pairing code is displayed by the backend service on the HP.").font(.system(size: 11)).foregroundStyle(StudioTheme.muted)
             }
             Section("WORKSPACE") {
                 LabeledContent("Processing", value: "Private HP backend")
                 LabeledContent("Editor", value: "ClipStudio AI")
-                LabeledContent("Build", value: "0.1 · Foundation")
+                LabeledContent("Build", value: "0.2 · Backend integration")
             }
             Section("PRIVACY & SAFETY") {
                 Text("Only submit media you own or are authorised to process. A YouTube link does not itself grant permission to extract media.")
@@ -313,6 +340,6 @@ struct SettingsView: View {
             }
         }.scrollContentBackground(.hidden).background(StudioTheme.bg).foregroundStyle(.white)
         .navigationTitle("Settings")
-        .alert("ClipStudio", isPresented: $showInfo) { Button("OK", role: .cancel) {} } message: { Text("Native iPhone foundation. Analysis API integration is the next engineering layer.") }
+        .alert("ClipStudio", isPresented: $showInfo) { Button("OK", role: .cancel) {} } message: { Text("Native iPhone client connected to the private local media-analysis and rendering pipeline. Full URL-based ingestion remains subject to source permissions and platform access.") }
     }
 }
