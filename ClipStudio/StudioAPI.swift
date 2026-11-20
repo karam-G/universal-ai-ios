@@ -2,6 +2,17 @@ import Foundation
 import SwiftUI
 import UniformTypeIdentifiers
 
+struct ClipStudioProject: Decodable, Identifiable {
+    let id: String
+    let jobId: String
+    let title: String
+    let sourceName: String
+    let createdAt: String
+    let status: String
+    let stage: String?
+    let progress: Double?
+}
+
 struct ClipStudioCandidate: Decodable, Identifiable {
     let id: Int
     let start: Double
@@ -48,6 +59,7 @@ final class ClipStudioAPI: ObservableObject {
         didSet { UserDefaults.standard.set(backendURL, forKey: "clipstudio_backend") }
     }
     @Published private(set) var token: String?
+    @Published private(set) var projects: [ClipStudioProject] = []
     @Published private(set) var connectionState = "Not connected"
     @Published private(set) var currentJob: ClipStudioJob?
     @Published private(set) var errorMessage: String?
@@ -125,9 +137,24 @@ final class ClipStudioAPI: ObservableObject {
             try validate(jobResponse, jobData)
             let created = try JSONDecoder().decode(JobCreateResponse.self, from: jobData)
             currentJob = created.job
+            projects.removeAll { $0.id == created.project.id }
+            projects.insert(created.project, at: 0)
             connectionState = "Processing on HP"
             errorMessage = nil
             await poll(jobId: created.job.id)
+        } catch { errorMessage = error.localizedDescription }
+    }
+
+    func loadProjects() async {
+        guard let token else { return }
+        do {
+            var request = URLRequest(url: base.appendingPathComponent("v1/projects"))
+            request.setValue("Bearer \\(token)", forHTTPHeaderField: "Authorization")
+            let (data, response) = try await URLSession.shared.data(for: request)
+            try validate(response, data)
+            let result = try JSONDecoder().decode(ProjectsResponse.self, from: data)
+            projects = result.projects.sorted { $0.createdAt > $1.createdAt }
+            if let latest = projects.first { await poll(jobId: latest.jobId) }
         } catch { errorMessage = error.localizedDescription }
     }
 
@@ -182,7 +209,8 @@ final class ClipStudioAPI: ObservableObject {
 
     private struct PairResponse: Decodable { let token: String }
     private struct UploadResponse: Decodable { let uploadId: String; let filename: String; let sizeBytes: Int }
-    private struct JobCreateResponse: Decodable { let job: ClipStudioJob }
+    private struct JobCreateResponse: Decodable { let job: ClipStudioJob; let project: ClipStudioProject }
+    private struct ProjectsResponse: Decodable { let projects: [ClipStudioProject] }
     enum APIError: LocalizedError {
         case server(String)
         var errorDescription: String? { if case .server(let message) = self { return message }; return nil }
@@ -251,5 +279,26 @@ struct JobProgressCard: View {
         .padding(16)
         .background(StudioTheme.panel, in: RoundedRectangle(cornerRadius: 18))
         .overlay(RoundedRectangle(cornerRadius: 18).stroke(StudioTheme.mint.opacity(0.18)))
+    }
+}
+
+struct ClipStudioProjectRow: View {
+    let project: ClipStudioProject
+    var body: some View {
+        HStack(spacing: 13) {
+            RoundedRectangle(cornerRadius: 13).fill(LinearGradient(colors: [StudioTheme.blue.opacity(0.25), StudioTheme.violet.opacity(0.18)], startPoint: .topLeading, endPoint: .bottomTrailing)).frame(width: 58, height: 58)
+                .overlay(Image(systemName: "play.rectangle.fill").font(.system(size: 19)).foregroundStyle(StudioTheme.blue))
+            VStack(alignment: .leading, spacing: 5) {
+                Text(project.title).font(.system(size: 14, weight: .semibold)).lineLimit(1)
+                Text(project.status.uppercased()).font(.system(size: 9, weight: .bold)).tracking(1.2).foregroundStyle(project.status == "completed" ? StudioTheme.mint : StudioTheme.orange)
+                Text(project.sourceName).font(.system(size: 10)).foregroundStyle(StudioTheme.muted).lineLimit(1)
+            }
+            Spacer()
+            if let progress = project.progress, project.status == "processing" {
+                Text("\(Int(progress))%").font(.system(size: 10, weight: .bold, design: .monospaced)).foregroundStyle(StudioTheme.mint)
+            } else {
+                Image(systemName: "chevron.right").font(.system(size: 11, weight: .bold)).foregroundStyle(StudioTheme.muted)
+            }
+        }.padding(12).background(StudioTheme.panel, in: RoundedRectangle(cornerRadius: 17)).overlay(RoundedRectangle(cornerRadius: 17).stroke(StudioTheme.line))
     }
 }
