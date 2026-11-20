@@ -2,7 +2,7 @@
 
 - Branch: `aion-clip-studio`
 - Bundle ID: `com.karam.clipstudio`
-- Version: `0.2.0` (build 2)
+- Version: `0.2.0` (build 3)
 - Minimum iOS: 17.0
 - Client: SwiftUI / AVKit / AVFoundation
 - Private compute host: Windows HP + Python + FFmpeg + local Ollama
