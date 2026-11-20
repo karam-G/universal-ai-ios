@@ -37,11 +37,26 @@ const server=http.createServer(async(req,res)=>{
     const job={id,projectId,uploadId:b.uploadId,status:'queued',stage:'queued',progress:0,message:'Waiting for local processing',createdAt:new Date().toISOString(),updatedAt:new Date().toISOString(),options:{mode:['universal','gaming','podcast','interview','education'].includes(b.mode)?b.mode:'universal',maxClips:Math.min(10,Math.max(1,Number(b.maxClips)||8)),aspectRatio:['9:16','16:9','1:1','4:5','4:3','3:4'].includes(b.aspectRatio)?b.aspectRatio:'9:16',captionStyle:['gaming','pro','podcast','clean'].includes(b.captionStyle)?b.captionStyle:'pro'}};
     save(dir,job);const source=path.join(UPLOADS,upload),child=spawn(PY,[path.join(ROOT,'clipstudio_pipeline.py'), '--source',source,'--job-dir',dir,'--clip-root',CLIP_ROOT,'--options',JSON.stringify(job.options)],{cwd:CLIP_ROOT,windowsHide:true});
     children.set(id,child);updateJob(id,{status:'processing',stage:'starting',message:'Starting local analysis'});
-    let buf='';child.stdout.on('data',d=>{buf+=d.toString();let lines=buf.split(/\r?\n/);buf=lines.pop();for(const line of lines){try{const ev=JSON.parse(line);updateJob(id,ev);}catch{}}});
+    let buf='';child.stdout.on('data',d=>{buf+=d.toString();let lines=buf.split(/\r?\n/);buf=lines.pop();for(const line of lines){try{const ev=JSON.parse(line);if(Array.isArray(ev.outputs)){const current=JSON.parse(fs.readFileSync(path.join(JOBS,id,'record.json'),'utf8'));ev.outputs=[...(current.outputs||[]),...ev.outputs];}updateJob(id,ev);}catch{}}});
     child.stderr.on('data',d=>{const msg=d.toString().slice(-1200);updateJob(id,{lastLog:msg});});
     child.on('close',code=>{children.delete(id);if(code===0){updateJob(id,{status:'completed',stage:'completed',progress:100,message:'Clips rendered and technical checks completed'});}else{const j=updateJob(id,{status:code===130?'cancelled':'failed',stage:'failed',message:'Local processing stopped. See error details.',exitCode:code});}});
     return json(res,202,{job,project});
    }catch(e){return json(res,e.status||500,{error:'job_create_failed',message:e.message});}
+ }
+ const rerender=p.match(/^\/v1\/jobs\/([a-f0-9-]+)\/render$/);if(req.method==='POST'&&rerender){
+  try{
+   const id=rerender[1],dir=path.join(JOBS,id),recordPath=path.join(dir,'record.json');
+   if(!fs.existsSync(recordPath))return json(res,404,{error:'job_not_found'});
+   if(children.has(id))return json(res,409,{error:'job_busy',message:'This project is already processing.'});
+   const b=await readBody(req,16384);if(!Number.isInteger(Number(b.candidateId)))return json(res,400,{error:'candidate_id_required'});
+   const options={aspectRatio:b.aspectRatio||'9:16',captionStyle:b.captionStyle||'pro',hook:String(b.hook||'').slice(0,80),watermark:String(b.watermark||'').slice(0,50),blurBackground:b.blurBackground!==false,soundDesign:b.soundDesign!==false};
+   const child=spawn(PY,[path.join(ROOT,'clipstudio_rerender.py'),'--job-dir',dir,'--clip-root',CLIP_ROOT,'--candidate-id',String(Number(b.candidateId)),'--options',JSON.stringify(options)],{cwd:CLIP_ROOT,windowsHide:true});
+   children.set(id,child);updateJob(id,{status:'processing',stage:'editing',progress:0,message:'Applying editor adjustments'});
+   let buf='';child.stdout.on('data',d=>{buf+=d.toString();let lines=buf.split(/\r?\n/);buf=lines.pop();for(const line of lines){try{const ev=JSON.parse(line);if(Array.isArray(ev.outputs)){const current=JSON.parse(fs.readFileSync(recordPath,'utf8'));ev.outputs=[...(current.outputs||[]),...ev.outputs];}updateJob(id,ev);}catch{}}});
+   child.stderr.on('data',d=>updateJob(id,{lastLog:d.toString().slice(-1200)}));
+   child.on('close',code=>{children.delete(id);if(code===0)updateJob(id,{status:'completed',stage:'completed',progress:100,message:'Revised clip rendered and checked'});else updateJob(id,{status:'failed',stage:'failed',message:'Re-render failed. Original exports are preserved.',exitCode:code});});
+   return json(res,202,{ok:true,jobId:id,status:'processing'});
+  }catch(e){return json(res,e.status||500,{error:'rerender_failed',message:e.message});}
  }
  const jm=p.match(/^\/v1\/jobs\/([a-f0-9-]+)$/);if(req.method==='GET'&&jm){const f=path.join(JOBS,jm[1],'record.json');if(!fs.existsSync(f))return json(res,404,{error:'job_not_found'});const j=JSON.parse(fs.readFileSync(f,'utf8'));const candidates=path.join(JOBS,jm[1],'candidates.json');if(fs.existsSync(candidates))j.candidates=JSON.parse(fs.readFileSync(candidates,'utf8')).candidates||[];return json(res,200,j);}
  const cancel=p.match(/^\/v1\/jobs\/([a-f0-9-]+)\/cancel$/);if(req.method==='POST'&&cancel){const c=children.get(cancel[1]);if(!c)return json(res,409,{error:'job_not_running'});if(process.platform==='win32')spawn('taskkill',['/PID',String(c.pid),'/T','/F'],{windowsHide:true});else c.kill('SIGTERM');return json(res,202,{ok:true,status:'cancelling'});}
