@@ -45,7 +45,6 @@ struct RootView: View {
     @State private var clipCount = "Best moments"
     @State private var isAnalysing = false
     @State private var toast: String?
-    @State private var jobs: [ClipJob] = []
     @State private var showSettings = false
 
     var body: some View {
@@ -71,6 +70,7 @@ struct RootView: View {
             }
         }
         .sheet(isPresented: $showNewProject) { NewProjectSheet(sourceURL: $sourceURL, selectedStyle: $selectedStyle, clipCount: $clipCount, rightsConfirmed: $rightsConfirmed, onChooseFile: { showFilePicker = true }, onStart: startAnalysis).presentationDetents([.large]).presentationDragIndicator(.visible) }
+        .onAppear { Task { await api.loadProjects() } }
         .fileImporter(isPresented: $showFilePicker, allowedContentTypes: [.movie, .mpeg4Movie, .quickTimeMovie], allowsMultipleSelection: false) { result in
             switch result {
             case .success(let urls):
@@ -120,7 +120,7 @@ struct RootView: View {
                 if let job = api.currentJob { JobProgressCard(job: job) }
 
                 HStack(spacing: 10) {
-                    MetricCard(value: "\(jobs.count)", label: "PROJECTS", icon: "square.stack.3d.up", tint: StudioTheme.blue)
+                    MetricCard(value: "\(api.projects.count)", label: "PROJECTS", icon: "square.stack.3d.up", tint: StudioTheme.blue)
                     MetricCard(value: "AI", label: "EDITOR", icon: "brain.head.profile", tint: StudioTheme.violet)
                     MetricCard(value: "4K", label: "EXPORT", icon: "4k.tv", tint: StudioTheme.orange)
                 }
@@ -133,10 +133,10 @@ struct RootView: View {
                     Spacer()
                     Button("View all") { tab = .projects }.font(.system(size: 12, weight: .semibold)).foregroundStyle(StudioTheme.mint)
                 }
-                if jobs.isEmpty {
+                if api.projects.isEmpty {
                     EmptyProjectCard()
                 } else {
-                    ForEach(jobs) { job in ProjectRow(job: job) }
+                    ForEach(api.projects) { project in ClipStudioProjectRow(project: project) }
                 }
 
                 HStack(spacing: 10) {
@@ -182,7 +182,7 @@ struct RootView: View {
             Text("Your projects").font(.system(size: 28, weight: .bold, design: .rounded)).padding(.top, 16)
             Text("Every analysis, edit and export in one place.").font(.system(size: 13)).foregroundStyle(StudioTheme.muted)
             if let job = api.currentJob { JobProgressCard(job: job) }
-            if jobs.isEmpty { EmptyProjectCard() } else { ForEach(jobs) { ProjectRow(job: $0) } }
+            if api.projects.isEmpty { EmptyProjectCard() } else { ForEach(api.projects) { ClipStudioProjectRow(project: $0) } }
         }.padding(.horizontal, 20) }
     }
     private var libraryView: some View {
@@ -216,9 +216,6 @@ struct RootView: View {
         let count = clipCount == "Top 5" ? 5 : clipCount == "Top 10" ? 10 : clipCount == "Top 20" ? 10 : 8
         Task {
             await api.uploadAndStart(file: file, mode: mode, maxClips: count, aspectRatio: "9:16", captionStyle: mode == "podcast" ? "podcast" : "pro", rightsConfirmed: rightsConfirmed)
-            if let job = api.currentJob {
-                jobs.insert(ClipJob(id: UUID(), title: file.deletingPathExtension().lastPathComponent, source: file.lastPathComponent, status: job.status.capitalized, created: Date()), at: 0)
-            }
             toast = api.errorMessage ?? api.connectionState
             try? await Task.sleep(for: .seconds(3))
             toast = nil
